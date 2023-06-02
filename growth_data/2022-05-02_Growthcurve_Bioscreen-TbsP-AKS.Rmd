@@ -549,7 +549,7 @@ ggsave(p_mu,
        width = 10, height = 8, units = "in", device='jpeg')
 ```
 
-## Plot mumax data, excluding 0.01% condition (does not fully rescue phenotype - 0.05% rescues)
+## Plot mumax data
 ```{r}
 mumean.05<- filter (mumean, ! ID == 'trmB (glu01)', ! ID == 'pyrE (glu01)', ! ID == 'tbsP (glu01)', ! ID == 'trmBtbsP (glu01)')
 
