@@ -5,5 +5,5 @@
 ### This repository contains code and data for figures and analysis included in this paper, see BioRxiv [URL] for the manuscript.
 
 #### Dependencies
-RStudio 2021.09.0 Build 351 or R v 4.1.1.
-Specialized R package dependencies are specified at the start of each Rmd file in this repository.
+* RStudio 2021.09.0 Build 351 or R v 4.1.1.
+* Specialized R package dependencies are specified at the start of each Rmd file in this repository.
