@@ -1,0 +1,690 @@
+---
+title: "2022-05-02-bioscreen-tbsP-AKS"
+author: "Angie Vreugdenhil-Hayslette & Amy Schmid"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r}
+# fresh start
+rm(list = ls()) 
+```
+
+```{r}
+# load required libraries
+library(plyr)
+library(tidyr) 
+library(dplyr)
+library(tibble)
+library(viridis)
+library(ggplot2)
+library(tinytex)
+library(latexpdf)
+library(data.table)
+library(growthrates)
+library(rstatix)
+library(ggpubr)
+library(EnvStats)
+```
+
+## SETTINGS
+```{r}
+##################################################################################################### SETTINGS
+# project folder
+folder <- '~/Dropbox (Duke Bio_Ea)/projects/TbsP/data/SH-suppressor-data/'
+# folder with meta
+foldermeta <- '~/Dropbox (Duke Bio_Ea)/projects/TbsP/data/SH-suppressor-data/meta/'
+# metafile name
+meta <- '2022-05-02-tbsP-all-meta.csv'
+# folder with data
+folderdata <- '~/Dropbox (Duke Bio_Ea)/projects/TbsP/data/SH-suppressor-data/data/'
+# datafile name
+data <- '2022-05-03-tbsP-all-data.csv'
+# wells to be removed based on observation (do not remove = 1000)
+#remove1<- 79
+#remove2<- 170
+#remove3<- 197
+#remove4<- 1000
+#remove5<- 1000
+#remove6<- 1000
+#remove7<- 1000
+#remove8<- 1000
+#remove9<- 1000
+#remove10<- 1000
+#remove11<- 1000
+#remove12<- 1000
+# blank wells (not a blank = 1000)
+#blank1<- 20
+#blank2<- 52
+#blank3<- 90
+
+```
+
+## read in RAW DATA
+```{r}
+
+##################################################################################################### RAW DATA
+# load data
+## read in metafile
+mt <- read.csv(paste(foldermeta, meta, sep = ''),
+               sep = ',',
+               header = TRUE)
+mt0 <- mt[-1, -(1:2)]
+## read in datafile
+dt <- read.csv(paste(folderdata, data, sep = ''),
+               sep = ',',
+               header = FALSE)
+dt0 <- dt[-(1:2), -2 ]
+colnames(dt0) <- c('time', dt0[1, -1])
+dt0 <- dt0[-1, ]
+
+# remove rows based on observation in meta
+#mt0 <- mt0[!(mt0$variable == remove1 |
+ #              mt0$variable == remove2 |
+  #             mt0$variable == remove3 |
+   #            mt0$variable == remove4 |
+    #           mt0$variable == remove5 |
+     #          mt0$variable == remove6 |
+      #         mt0$variable == remove7 |
+       #        mt0$variable == remove8 |
+        #       mt0$variable == remove9 |
+         #      mt0$variable == remove10 |
+          #     mt0$variable == remove11 |
+            #   mt0$variable == remove12),]
+
+# remove rows based on observation in data
+#dt0 <- dt0 %>% select(-contains(as.character(remove1)))
+#dt0 <- dt0 %>% select(-contains(as.character(remove2)))
+#dt0 <- dt0 %>% select(-contains(as.character(remove3)))
+```
+
+## Format data
+```{r}
+# extract hours, mins, secs (Comment in if your time is listed in format of "1:30:06". Not needed if time is already expressed in hours (e.g. "1.5" = 1 hr 30 mins))
+#hou <-
+#  as.numeric(lapply(strsplit(as.character(dt0$time), ':'), '[[', 1))
+#min <-
+#  as.numeric(lapply(strsplit(as.character(dt0$time), ':'), '[[', 2))
+#sec <-
+#  as.numeric(lapply(strsplit(as.character(dt0$time), ':'), '[[', 3))
+## set total time to hours
+#dt0$time <- (hou) + min / 60 + (sec / 3600)
+
+# melt the dataframe to one list
+m_dt <- melt(dt0, id = 'time')
+## merge
+mtdt <- merge(m_dt, mt0, by = 'variable')
+mtdt$environment <- ifelse(mtdt$condition=='',as.character(mtdt$media),paste(mtdt$media,'+',mtdt$condition,sep=''))
+mtdt$ID <- ifelse(mtdt$condition=='',as.character(mtdt$name),paste(mtdt$name,' (',mtdt$condition,')',sep=''))
+well <- paste(mtdt$variable, mtdt$strain, sep = ' ')
+mtdt <- cbind(well, mtdt)
+## remove rows without ID
+c_mtdt <- mtdt[!(mtdt$ID == ''), ]
+```
+
+#Time cutoff (comment out if not needed)
+```{r}
+# time cutoff
+t_mtdt <- c_mtdt#[!(c_mtdt$time <= 0.5 | c_mtdt$time >= 48), ]
+t_mtdt[500:510,] #look at the data to make sure time cutoff worked properly
+## fix delta symbol
+#t_mtdt$ID<- gsub('_','\u0394',t_mtdt$ID)
+#t_mtdt$name<- gsub('_','\u0394',t_mtdt$name)
+## select blanks (three tech reps each)
+#blanks<- t_mtdt[(t_mtdt$variable == 1 |
+ #                  t_mtdt$variable == 2 |
+  #               t_mtdt$variable == 3 |
+   #              t_mtdt$variable == 4 |
+    #               t_mtdt$variable ==  5 |
+     #              t_mtdt$variable == 6 |
+      #             t_mtdt$variable == 7 |
+       #            t_mtdt$variable == 8 |
+        #           t_mtdt$variable == 9 |
+         #          t_mtdt$variable == 10 |
+          #         t_mtdt$variable == 11 |
+           #        t_mtdt$variable == 12), ]
+```
+
+## Calculate stats
+```{r}
+## summarize all values (time, strain, media, condition, biorep)
+tm_mtdt<- ddply(t_mtdt, c('time', 'ID', 'strain', 'name', 'media', 'condition', 'environment', 'biorep'),
+               summarize,
+               value_mn = mean(as.numeric(value)),
+               value_sd = sd(value))
+```
+
+## If you included blank wells, subtract blanks from culture OD readings
+```{r}
+# set baseline (blank wells)
+## take minimal value of each blank per condition
+#blank_all<- ddply(blanks, c('environment','time'),
+       #       summarize,
+        #     blank=min(value)-0.01)
+##Comment "blank_all" in if you used blanks.
+
+## add correct blank values to each row
+#bu_mtdt<- merge(t_mtdt,blank_all,c('environment','time')) # use this if you have blank wells
+bu_mtdt<- merge(t_mtdt,c('environment','time')) #use this if you don't have blank wells
+## reorganize columns
+#bu_mtdt$value_mn<- bu_mtdt$value - bu_mtdt$blank  #subtract blank values if you have blanks
+bu_mtdt$value_mn<- bu_mtdt$value #use this if you don't have blanks
+#bu_mtdt$blank<- NULL
+## summarize all blank corrected values (time, strain, media, condition, biorep)
+bm_mtdt<- ddply(bu_mtdt, c('time', 'ID', 'strain', 'name', 'media', 'condition', 'environment', 'biorep'),
+                summarize,
+                value_mn = mean(value),
+                value_sd = sd(value))
+## remove blank rows
+b_mtdt <- bu_mtdt[!bu_mtdt$name=='blank',]
+bm_mtdt <- bm_mtdt[!bm_mtdt$name=='blank',]
+min(bm_mtdt$value_mn)
+min(bm_mtdt$value_mn)
+
+```
+
+## PLOT BLANKS - only needed if you included blank wells
+```{r}
+##################################################################################################### PLOT BLANKS
+# all growth curves
+# folder for plots
+dir.create(paste(folder,'plots',sep=''))
+setwd(paste(folder,'plots',sep=''))
+# blanks
+p_blanks<- 
+  ggplot(blanks, aes(x = time, y = value, color = environment)) +
+  ggtitle('Blank curves') +
+  xlab('time (h)') + 
+  ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  scale_color_viridis('condition', discrete = TRUE) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "italic",size = 8),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='plain', color='#000000', size=10, angle=0))
+
+ggsave(p_blanks,
+       file = paste(
+         format(Sys.time(), '%Y%m%d'),
+         '_',
+         'plot_blanks',
+         #'.jpeg',
+         '.pdf',
+         sep = ''),
+       width = 10, height = 8, units = "in", device='pdf')
+
+```
+
+## PLOT RAW
+```{r}
+##################################################################################################### PLOT RAW
+# folder for plots
+dir.create(paste(folder,'plots',sep=''))
+setwd(paste(folder,'plots',sep=''))
+
+# growthcurves - one plot - well
+#p_well <- 
+#pdf('tbsP_rawplots.pdf', width = 6, height = 8)
+  ggplot(t_mtdt, aes(x = as.numeric(time), y = as.numeric(value))) +
+  ggtitle('Growthcurves each well') +
+  xlab('time (h)') + 
+ ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  scale_color_viridis('well', discrete = TRUE) +
+  theme(legend.position = 'none',
+        strip.text = element_text(face = "italic",size = 8),
+        plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+        axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+        axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+        legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+        axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+        axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+        legend.text = element_text(face='plain', color='#000000', size=10, angle=0))
+#dev.off()
+#ggsave(p_well, file = paste(
+ # format(Sys.time(), '%Y%m%d'),
+  #'_',
+  #'plot_well_all',
+ # '.jpeg',
+ #'.pdf',
+#  sep = ''),
+ # width = 10, height = 8, units = "in", device='pdf')
+```
+
+```{r}
+# growthcurves - one plot - ID
+p_id <- 
+  ggplot(t_mtdt, aes(x = as.numeric(time), y = as.numeric(value), color = ID)) +
+  ggtitle('Growthcurves each strain') +
+  xlab('time (h)') + 
+  ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_point() +
+  scale_y_continuous(trans = 'log2') +
+  scale_color_viridis('strain description', discrete = TRUE) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "italic",size = 8),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='italic', color='#000000', size=10, angle=0))
+
+ggsave(p_id, file = paste(
+  format(Sys.time(), '%Y%m%d'),
+  '_',
+  'plot_ID_all',
+  #'.jpeg',
+  '.pdf',
+  sep = ''),
+  width = 10, height = 8, units = "in", device='pdf')
+```
+
+```{r}
+# growthcurves - grid
+p_gri <-
+  ggplot(t_mtdt, aes(x = as.numeric(time), y = as.numeric(value))) +
+  ggtitle('Growthcurves each well') +
+  xlab('time (h)') + 
+ ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  facet_wrap(~ well) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "plain",size = 8),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=8, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=8, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=8, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=6, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=6, angle=0),
+    legend.text = element_text(face='plain', color='#000000', size=8, angle=0))
+
+ggsave(p_gri, file = paste(
+  format(Sys.time(), '%Y%m%d'),
+  '_',
+  'plot_grid_all',
+  '.jpeg',
+  sep = ''),
+  width = 10, height = 8, units = "in", device='jpeg')
+```
+
+```{r}
+
+##################################################################################################### PLOT STATS
+# folder for plots
+dir.create(paste(folder,'plots',sep=''))
+setwd(paste(folder,'plots',sep=''))
+
+# 95% confidence interval function
+conf_int95 <- function(data) {
+  n <- length(data)
+  error <- qt(0.975, df = n - 1) * sd(data) / sqrt(n)
+  return(error)
+}
+
+stats <- tm_mtdt %>%
+  group_by(ID, strain, name, environment, time) %>%
+  summarise(
+    reps = length(value_mn),
+    average = mean(value_mn),
+    CI95 = conf_int95(value_mn)) %>%
+  filter(!strain == '')
+
+
+# growth curves - average strain
+p_ave_str <-
+ggplot(stats, aes(x = as.numeric(time), y = average, color = environment)) +
+  ggtitle('Growthcurves averaged each condition and separated by strain') +
+  xlab('time (h)') + 
+ ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_ribbon(
+    aes(
+      ymin = average - CI95,
+      ymax = average + CI95,
+      fill = environment), color = NA, alpha = 0.3) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  facet_grid(name ~ .) +
+  scale_fill_viridis('condition', discrete = TRUE) +
+  scale_color_viridis('condition', discrete = TRUE) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "italic",size = 7),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='plain', color='#000000', size=10, angle=0))
+
+ggsave(p_ave_str,
+       file = paste(
+         format(Sys.time(), '%Y%m%d'),
+         '_',
+         'plot_average_strain',
+         '.pdf',
+         sep = ''),
+       width = 4, height =6, units = "in", device='pdf')
+
+
+```
+
+```{r}
+# growth curves - average condition
+p_ave_con <-
+ggplot(stats, aes(x = as.numeric(time), y = average, color = name)) +
+  ggtitle('Growthcurves averaged each strain and separated by condition') +
+  xlab('time (h)') + 
+ ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_ribbon(
+    aes(
+      ymin = average - CI95,
+      ymax = average + CI95,
+      fill = name), color = NA, alpha = 0.3) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  facet_grid(environment ~ .) +
+  scale_fill_viridis('Strain name', discrete = TRUE) +
+  scale_color_viridis('Strain name', discrete = TRUE) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "italic",size = 10),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='italic', color='#000000', size=10, angle=0))
+
+ggsave(p_ave_con,
+      file = paste(
+        format(Sys.time(), '%Y%m%d'),
+        '_',
+        'plot_average_condition',
+        '.pdf',
+        sep = ''),
+      width = 4, height = 6, units = "in", device='pdf')
+```
+
+## plot average conditions, 0.05% glucose only - Fig 5A
+```{r}
+#set the colors
+group.colors <- c(pyrE = '#440154', trmB="#35B779", trmBtbsP ="#A6A560", tbsP ="#E79A51")
+
+#filter the data to include only 0.05% glucose
+stats.05 <- filter (stats, ! ID == 'trmB (glu01)', ! ID == 'pyrE (glu01)', ! ID == 'tbsP (glu01)', ! ID == 'trmBtbsP (glu01)')
+
+#plot the data and export to pdf file
+pdf('growthcurve-stats.05.pdf', height = 5, width = 5)
+ggplot(stats.05, aes(x = as.numeric(time), y = average, color = name)) +
+  ggtitle('Growthcurves averaged each strain and separated by condition') +
+  xlab('time (h)') + 
+ ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_ribbon(
+    aes(
+      ymin = average - CI95,
+      ymax = average + CI95,
+      fill = name), color = NA, alpha = 0.3) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  facet_grid(environment ~ .) +
+  scale_fill_manual(values = group.colors) +
+  scale_color_manual(values = group.colors) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "italic",size = 10),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='italic', color='#000000', size=10, angle=0))
+dev.off()
+```
+
+
+```{r}
+##################################################################################################### MUMAX Growthrates
+# folder for plots
+dir.create(paste(folder,'plots',sep=''))
+setwd(paste(folder,'plots',sep=''))
+
+t_mtdt$time <- as.numeric(t_mtdt$time)
+t_mtdt$value <- as.numeric(t_mtdt$value)
+
+# extract mumax for plotting fit
+pretty_spline_fits <-
+  all_splines(value ~ time | ID + biorep,
+              data = t_mtdt,
+              spar = 0.5)
+# extract mumax for table
+all_spline_fits <-
+  all_splines(value ~ time | ID + biorep + strain + name + environment,
+              data = t_mtdt,
+              spar = 0.5)
+
+#plot spline fit
+jpeg(paste(
+  format(Sys.time(), '%Y%m%d'),
+  '_',
+  'plot_splines',
+  '.jpeg',sep=''),
+  width = 1188, 
+  height = 880)
+par(mfrow = c(8, 7))
+par(mar = c(2, 2, 1.5, 1.25))
+plot(pretty_spline_fits, log='y')
+dev.off()
+
+# store results in dataframe
+mumax<- results(all_spline_fits)
+row.names(mumax)<- NULL
+
+# remove blanks
+mumax <- mumax[!mumax$strain=='blank',]
+
+
+# remove mumax with rsquared below 0.95
+mumax$mumax <- ifelse(mumax$r2 < 0.95, 0, mumax$mumax)
+#mumax.noHA <-  ifelse(mumax.noHA$r2 < 0.95, 0, mumax.noHA$mumax)
+# calculate mean mumax
+mumean<- ddply(mumax,c('ID','strain','name','environment'), 
+               summarize,
+               OD_mn=mean(y0),
+               OD_sd=sd(y0),
+               mumax_mn=mean(mumax),
+               mumax_sd=sd(mumax))
+
+```
+
+
+
+```{r}
+#reorder
+mumean<- mumean[order(mumean$mumax_mn),]
+mumean$ID <- factor(mumean$ID, levels = mumean$ID[order(mumean$mumax_mn)])
+
+#mumean.noHA<- mumean.noHA[order(mumean.noHA$mumax_mn),]
+#mumean.noHA$ID <- factor(mumean.noHA$ID, levels = mumean.noHA$ID[order(mumean.noHA$mumax_mn)])
+```
+
+```{r}
+# growthcurves - bars
+p_mu <- 
+  ggplot(data = mumean, aes(x = ID, y = mumax_mn, fill = name)) +
+  ggtitle('Mean mumax of bioreps comparison') +
+  xlab('Strain name (condition)') + 
+  ylab('[mumax]')+
+  geom_bar(stat='identity') +
+  geom_errorbar(aes(ymin=mumax_mn-mumax_sd, ymax=mumax_mn+mumax_sd), width=.2,
+              position=position_dodge(.9))+
+  coord_flip() +
+   scale_fill_viridis('name', discrete = TRUE) +
+  scale_color_viridis('name', discrete = TRUE) +
+  theme(#legend.position = 'none',
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='italic', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='italic', color='#000000', size=10, angle=0))
+
+ggsave(p_mu,
+       file = paste(
+         format(Sys.time(), '%Y%m%d'),
+         '_',
+         'plot_mumax',
+         '.jpeg',
+         sep = ''),
+       width = 10, height = 8, units = "in", device='jpeg')
+```
+
+## Plot mumax data, excluding 0.01% condition (does not fully rescue phenotype - 0.05% rescues)
+```{r}
+mumean.05<- filter (mumean, ! ID == 'trmB (glu01)', ! ID == 'pyrE (glu01)', ! ID == 'tbsP (glu01)', ! ID == 'trmBtbsP (glu01)')
+
+
+
+pdf('mumean.05.pdf', height = 4, width = 6)
+  ggplot(data = mumean.05, aes(x = ID, y = mumax_mn, fill = name)) +
+  ggtitle('Mean mumax of bioreps comparison') +
+  xlab('Strain name (condition)') + 
+  ylab('[mumax]')+
+  geom_bar(stat='identity') +
+  geom_errorbar(aes(ymin=mumax_mn-mumax_sd, ymax=mumax_mn+mumax_sd), width=.2,
+              position=position_dodge(.9))+
+  coord_flip() +
+   scale_fill_manual(values = group.colors) +
+  scale_color_manual(values = group.colors) +
+  theme(#legend.position = 'none',
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='italic', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='italic', color='#000000', size=10, angle=0))
+dev.off()
+#ggsave(p_mu.05only,
+ #      file = paste(
+  #       format(Sys.time(), '%Y%m%d'),
+   #      '_',
+    #     'plot_mumax_05',
+     #    '.pdf',
+      #   sep = ''),
+      # width = 10, height = 8, units = "in", device='jpeg')
+
+```
+
+## inset, fig 5A, tbsP vs parent
+```{r}
+stats.05 <- filter (stats, ! ID == 'trmB (glu01)', ! ID == 'pyrE (glu01)', ! ID == 'tbsP (glu01)', ! ID == 'trmBtbsP (glu01)') %>%
+  filter (name == "pyrE" | name == "trmBtbsP")
+
+#plot the data and export to pdf file
+pdf('growthcurve-stats.05.inset.pdf', height = 5, width = 5)
+ggplot(stats.05, aes(x = as.numeric(time), y = average, color = name)) +
+  ggtitle('Growthcurves averaged each strain and separated by condition') +
+  xlab('time (h)') + 
+ ylab(bquote(bold(paste('Log'['2'],'(Absorbance at 600nm)')))) +
+  geom_ribbon(
+    aes(
+      ymin = average - CI95,
+      ymax = average + CI95,
+      fill = name), color = NA, alpha = 0.3) +
+  geom_line() +
+  scale_y_continuous(trans = 'log2') +
+  facet_grid(environment ~ .) +
+  scale_fill_manual(values = group.colors) +
+  scale_color_manual(values = group.colors) +
+  theme(#legend.position = 'none',
+    strip.text = element_text(face = "italic",size = 10),
+    plot.title = element_text(face='bold', color='#000000', size=12, angle=0),
+    axis.title.x = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.title.y = element_text(face='bold', color='#000000', size=10, angle=90),
+    legend.title = element_text(face='bold', color='#000000', size=10, angle=0),
+    axis.text.y = element_text(face='plain', color='#000000', size=8, angle=0),
+    axis.text.x = element_text(face='plain', color='#000000', size=8, angle=0),
+    legend.text = element_text(face='italic', color='#000000', size=10, angle=0))
+dev.off()
+```
+
+## is the growth of ∆tbsP and ∆trmB∆tbsP deletion strains significantly different from parent strain pyrE?
+
+
+```{r}
+	#Hypotheses to test (these are each independent hypotheses. don't need ANOVA, don't need multiple hypothesis testing, also cuz not so many tests):
+	#1. Null hypothesis 1 = pyrE growth is not different from trmB in - glu
+	#2. Null hypothesis 2 = pyrE growth is not different from tbsP in - glu
+	#3. Null hypothesis 3 =  pyrE growth is not different from double mutant in -glu.
+  #4. Null hypothesis 4 = pyrE growth is not different from tbsP in + glu
+  #5. Null hypothesis 5 = pyrE growth in - glu is not different from pyrE in +glu
+  #6. Null hypothesis 6 = trmB growth in - glu is not different from trmB in +glu
+  #7. Null hypothesis 7 = tbsP growth in - glu is not different from tbsP in +glu
+  #8. Null hypothesis 8 = trmBtbsP growth in - glu is not different from trmBtbsP in +glu
+  #9. Null hypothesis 9 = pyrE growth in +glu is not different from trmB in +glu
+
+hyp1 = filter (mumax, environment == "HvCA_ura+noGlu") %>%
+  filter (name == "pyrE" | name == "trmB") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+
+hyp2 = filter (mumax, environment == "HvCA_ura+noGlu") %>%
+  filter (name == "pyrE" | name == "tbsP") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+
+hyp3 = filter (mumax, environment == "HvCA_ura+noGlu") %>%
+  filter (name == "pyrE" | name == "trmBtbsP") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+
+
+hyp4 = filter (mumax, environment == "HvCA_ura+glu05") %>%
+  filter (name == "pyrE" | name == "tbsP") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+
+
+hyp5 = filter (mumax, ! environment   == "HvCA_ura+glu01") %>%
+  filter (name == "pyrE") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+hyp6 = filter (mumax, ! environment   == "HvCA_ura+glu01") %>%
+  filter (name == "trmB") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+hyp7 = filter (mumax, ! environment   == "HvCA_ura+glu01") %>%
+  filter (name == "tbsP") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+hyp8 = filter (mumax, ! environment   == "HvCA_ura+glu01") %>%
+  filter (name == "trmBtbsP") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+hyp9 = filter (mumax, environment == "HvCA_ura+glu05") %>%
+  filter (name == "pyrE" | name == "trmB") %>%
+  t_test(mumax ~ ID, p.adjust.method = "BH")
+
+all_tests <- rbind(hyp1, hyp2, hyp3, hyp4, hyp5, hyp6, hyp7, hyp8, hyp9)
+write.table(all_tests, file = "t-test_hypotheses_1to9.txt", sep = "\t")
+
+#reject null for all hypotheses except #9.
+```
+
+
+
+
+
+##################################################################################################### END
+
