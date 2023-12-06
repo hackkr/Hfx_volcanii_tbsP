@@ -1,0 +1,7 @@
+HVO_1269 (pseudo)    	-650..-181	470	=>	CDS         
+HVO_1270 (Lasse 2019)	-477..-44 	434	<=	CDS         
+HVO_1270             	-180..-40 	141	<=	CDS         
+chIP                 	-149..151 	300	==	misc_feature
+summit               	1^2       	0  	==	misc_feature
+tbsP motif           	17..28    	12 	==	misc_feature
+HVO_1271             	183..351  	169	<=	CDS         

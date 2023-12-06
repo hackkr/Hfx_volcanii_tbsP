@@ -1,0 +1,14 @@
+ChIP-seq peak             	-150..150	300 	==	misc_feature
+weaker trmB-motif         	-66..-46 	21  	==	misc_feature
+bgaH sequence             	-56..37  	93  	==	misc_feature
+trmB-motif                	-38..-18 	21  	==	misc_feature
+tbsP-motif                	-25..-14 	12  	==	misc_feature
+secondary TATA            	-19..-16 	4   	==	misc_feature
+summit                    	-1^1     	0   	==	misc_feature
+TATA                      	3..8     	6   	==	misc_feature
+UTR (optional)            	11..37   	27  	==	misc_feature
+TSS (secondary)           	11^12    	0   	==	misc_feature
+HVO_0478 transcript, Lasse	22..1105 	1084	=>	misc_feature
+TSS                       	37^38    	0   	==	misc_feature
+HVO_0478                  	38..1105 	1068	=>	CDS         
+CDS start                 	38..40   	3   	=>	misc_feature

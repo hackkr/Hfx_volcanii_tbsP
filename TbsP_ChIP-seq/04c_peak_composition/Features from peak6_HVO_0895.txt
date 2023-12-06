@@ -1,0 +1,15 @@
+HVO_0894 (partial)       	-854..-306	549 	=>	CDS         
+70 bp upstream HVO_0894n2	-747..-677	71  	<=	misc_feature
+70bp upstream HVO_0894n3 	-460..-390	71  	=>	misc_feature
+HVO_0895                 	-276..-31 	246 	<=	CDS         
+CDS stop                 	-276..-274	3   	<=	misc_feature
+chIP                     	-150..150 	300 	==	misc_feature
+CDS start                	-33..-31  	3   	<=	misc_feature
+TSS                      	-31^-30   	0   	==	misc_feature
+TATA                     	-2..4     	6   	==	misc_feature
+summit                   	-1^1      	0   	==	misc_feature
+tbsP motif               	21..32    	12  	==	misc_feature
+TATA                     	114..122  	9   	==	TATA_signal 
+HVO_0896                 	147..1769 	1623	=>	CDS         
+CDS start                	147..149  	3   	=>	misc_feature
+70 bp upstream 0896n     	1659..1729	71  	==	misc_feature

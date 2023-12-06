@@ -1,0 +1,46 @@
+peak,feature,start,end,type
+1,HVO_2626 ,-150,-40,gene         
+1,motif    ,-5,7,motif
+1,motif    ,7,-5,motif
+1,TATA     ,28,32,TATA      
+1,TSS,57,58,TSS
+1,UTR,58,61,UTR
+1,HVO_2627 ,62,150,gene         
+2,HVO_A0479 ,-150,-8,gene         
+2,motif,-29,-18,motif
+2,motif,-18,-29,motif
+2,HVO_A0480 ,-5,150,gene         
+3,HVO_1270,-40,-150,gene         
+3,motif,-27,-16,motif
+3,motif,-16,-27,motif
+4,motif       ,-25,-14,motif
+4,motif,-14,-25,motif
+4,TATA,-19,-16,TATA      
+4,TATA             ,3,8,TATA      
+4,TSS (secondary),11,12,TSS
+4,UTR (optional),11,37,UTR
+4,TSS,37,38,TSS
+4,HVO_0478         ,38,150,gene         
+5,HVO_A0057,-150,78,gene         
+5,HVO_RS20465,150,92,gene         
+6,HVO_RS20465,150,92,gene         
+6,HVO_0895  ,-31,-150,gene         
+6,TSS,-30,-31,TSS
+6,TATA      ,4,-2,TATA      
+6,motif,21,32,motif
+6,motif,32,21,motif
+6,TATA      ,114,122,TATA      
+6,HVO_0896  ,147,150,gene         
+7,HVO_A0454,-150,-66,gene         
+7,motif                ,-20,-9,motif
+7,motif,-9,-20,motif
+7,TATA                 ,10,16,TATA      
+7,HVO_A0455            ,36,150,gene         
+8,motif    ,-125,-114,motif
+8,motif,-114,-125,motif
+9,HVO_B0276,-90,-150,gene         
+9,TATA     ,-60,-64,TATA      
+9,motif    ,2,13,motif
+9,motif,13,2,motif
+9,TATA     ,83,88,TATA      
+9,HVO_B0277,111,150,gene         

@@ -1,0 +1,3 @@
+seqnames,start,end,width,strand,peak_rank,peak_score,overlap_feature,overlap_length,locus_tag,old_locus_tag,feature_strand,feature_start,feature_end,feature_length,annotation,motif.pval,type,motif,motif_start,motif_end
+NC_013966.1,232645,232945,301,*,4,218.77,promoter,208,HVO_RS02855,HVO_A0226,-,232306,232602,297,winged helix-turn-helix domain-containing protein,3.87e-5,2-WGAAATWAASTC,motif,232791,232802
+NC_013966.1,232645,232945,301,*,4,218.77,promoter,169,HVO_RS02860,HVO_A0228,+,233027,233902,876,5'/3'-nucleotidase SurE,3.87e-5,2-WGAAATWAASTC,motif,232791,232802

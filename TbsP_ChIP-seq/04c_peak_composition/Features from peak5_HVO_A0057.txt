@@ -1,0 +1,6 @@
+HVO_A0057                  	-744..78  	822	=>	CDS         
+70bp upstream of HVO_A0057n	-738..-668	71 	=>	misc_feature
+TATA                       	-697..-694	4  	==	misc_feature
+ChIP peak                  	-150..150 	300	==	misc_feature
+summit                     	-1^1      	0  	==	misc_feature
+CDS stop                   	76..78    	3  	=>	misc_feature

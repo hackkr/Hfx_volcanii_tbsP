@@ -1,0 +1,7 @@
+HVO_A0479 	-805..-8 	798	=>	CDS         
+chIP      	-150..150	300	==	misc_feature
+tbsP motif	-29..-18 	12 	==	misc_feature
+CDS stop  	-10..-8  	3  	=>	misc_feature
+HVO_A0480 	-5..949  	954	=>	CDS         
+CDS start 	-5..-3   	3  	=>	misc_feature
+summit    	-1^1     	0  	==	misc_feature

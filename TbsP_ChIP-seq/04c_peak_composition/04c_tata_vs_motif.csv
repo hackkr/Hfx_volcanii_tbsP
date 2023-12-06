@@ -1,0 +1,49 @@
+peak,feature,start,end,width,strand,type
+1,HVO_2626 ,-468,-40,428,+,gene         
+1,consensus peak     ,-150,150,300,*,peak
+1,CDS stop ,-42,-40,2,+,CDS stop  
+1,motif    ,-5,7,12,*,motif
+1,TATA     ,23,29,6,*,TATA      
+1,HVO_2627 ,62,820,758,+,gene         
+1,CDS start,62,64,2,+,CDS start 
+2,HVO_A0479 ,-805,-8,797,+,gene         
+2,consensus peak      ,-150,150,300,*,peak
+2,motif,-29,-18,11,*,motif
+2,CDS stop  ,-10,-8,2,+,CDS stop  
+2,HVO_A0480 ,-5,949,954,+,gene         
+2,CDS start ,-5,-3,2,+,CDS start 
+3,consensus peak      ,-150,150,300,*,peak
+3,motif,-27,-16,11,*,motif
+4,consensus peak    ,-150,150,300,*,peak
+4,motif       ,-25,-14,11,*,motif
+4,TATA             ,3,8,5,*,TATA      
+4,HVO_0478         ,38,1105,1067,+,gene         
+4,CDS start        ,38,40,2,+,CDS start 
+5,HVO_A0057,-744,78,822,+,gene         
+5,consensus peak,-150,150,300,*,peak
+5,CDS stop ,76,78,2,+,CDS stop  
+6,HVO_0895  ,-31,-276,-245,-,gene         
+6,CDS stop  ,-274,-276,-2,-,CDS stop  
+6,consensus peak      ,-150,150,300,*,peak
+6,CDS start ,-31,-33,-2,-,CDS start 
+6,TATA      ,-2,4,6,*,TATA      
+6,motif,21,32,11,*,motif
+6,TATA      ,114,122,8,*,TATA      
+6,HVO_0896  ,147,1769,1622,+,gene         
+6,CDS start ,147,149,2,+,CDS start 
+7,consensus peak                 ,-150,150,300,*,peak
+7,motif                ,-20,-9,11,*,motif
+7,TATA                 ,10,16,6,*,TATA      
+7,HVO_A0455            ,36,368,332,+,gene         
+7,CDS start            ,36,38,2,+,CDS start 
+8,consensus peak     ,-150,150,300,*,peak
+8,motif    ,-125,-114,11,*,motif
+8,HVO_A0353,375,620,245,+,gene         
+9,HVO_B0276,-90,-1061,-971,-,gene         
+9,consensus peak     ,-150,150,300,*,peak
+9,CDS start,-90,-92,-2,-,CDS start 
+9,TATA     ,-64,-60,4,*,TATA      
+9,motif    ,2,13,11,*,motif
+9,TATA     ,83,88,5,*,TATA      
+9,HVO_B0277,111,899,788,+,gene         
+9,CDS start,111,113,2,+,CDS start 

@@ -1,0 +1,16 @@
+HVO_A0351 (partial)    	-526..-188	339	=>	CDS         
+upstream HVO_A0351n3   	-460..-390	71 	<=	misc_feature
+TSS                    	-460^-459 	0  	==	misc_feature
+ChIP                   	-150..150 	300	==	misc_feature
+motif                  	-125..-114	12 	==	misc_feature
+summit                 	-1^1      	0  	==	misc_feature
+asRNA from lasse 2019  	188..385  	198	<=	misc_feature
+promoter region        	230..300  	71 	==	misc_feature
+TATA?                  	273..277  	5  	==	misc_feature
+UTR                    	301..374  	74 	==	5'UTR       
+upstream of HVO_A0353n2	338..408  	71 	=>	misc_feature
+HVO_A0353              	375..620  	246	=>	CDS         
+TATA                   	380..384  	5  	==	misc_feature
+upstream of HVO_A0353n1	398..468  	71 	<=	misc_feature
+TATA                   	424..427  	4  	==	misc_feature
+HVO_A0354              	665..820  	156	=>	CDS         

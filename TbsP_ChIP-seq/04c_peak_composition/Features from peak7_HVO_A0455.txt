@@ -1,0 +1,10 @@
+discontinued HVO_0454    	-254..-66 	189	=>	CDS         
+70bp upstream HVO_A0454n
+	-187..-117	71 	=>	misc_feature
+chIP                     	-150..150 	300	==	misc_feature
+TSS                      	-117^-116 	0  	==	misc_feature
+motif                    	-20..-9   	12 	==	misc_feature
+summit                   	-1^1      	0  	==	misc_feature
+TATA                     	10..16    	7  	==	TATA_signal 
+HVO_A0455                	36..368   	333	=>	CDS         
+CDS start                	36..38    	3  	=>	misc_feature

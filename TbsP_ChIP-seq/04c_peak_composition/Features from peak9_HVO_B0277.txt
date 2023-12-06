@@ -1,0 +1,11 @@
+HVO_B0276          	-1061..-90	972	<=	CDS         
+ChIP               	-150..150 	300	==	misc_feature
+CDS start          	-92..-90  	3  	<=	misc_feature
+TATA               	-64..-60  	5  	==	misc_feature
+summit             	-1^1      	0  	==	misc_feature
+motif              	2..13     	12 	==	misc_feature
+TATA               	83..88    	6  	==	misc_feature
+TSS                	110^111   	0  	==	misc_feature
+HVO_B0277          	111..899  	789	=>	CDS         
+CDS start          	111..113  	3  	=>	misc_feature
+HVO_B0277n promoter	575..645  	71 	=>	misc_feature
