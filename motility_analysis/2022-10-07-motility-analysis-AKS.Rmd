@@ -1,0 +1,130 @@
+---
+title: "R Notebook"
+author: "Rylee Hackley & Amy K. Schmid"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggpattern)
+library(ggpubr)
+
+in2 <- read_csv("imageJ_measurements.csv")
+in2$strain2 <- str_replace_all(in2$strain, c("trmBtbsP" = "mut", "tbsP" = "mut", "trmB" = "mut"))
+in2
+```
+
+```{r, message=FALSE, warning=FALSE}
+in2 %>%
+  group_by(filename, plate, condition, strain2) %>%
+  summarise(average = mean(area_in)) %>%
+  filter(condition != "tbsP+noglu" | plate != 3) %>%
+  group_by(filename, plate, condition) %>%
+  summarise(ratio = average[strain2 == "mut"] / average[strain2 == "WT"]) %>%
+  group_by(condition) %>%
+  summarise(
+    avg_ratio = mean(ratio),
+    sd_ratio = sd(ratio)
+  ) %>%
+  separate(condition, c("strain", "condition")) -> tmp2
+
+ggplot(data = tmp2, aes(y = avg_ratio, x = condition, fill = strain)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = avg_ratio - sd_ratio, ymax = avg_ratio + sd_ratio),
+    width = .1, size = 1, position = position_dodge(.9)
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.02))) +
+  theme_bw()
+
+ggplot(data = tmp2, aes(y = avg_ratio, x = strain, fill = condition)) +
+  geom_hline(yintercept = 1, color = "grey", linetype = "dashed", size = 1) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = avg_ratio - sd_ratio, ymax = avg_ratio + sd_ratio),
+    width = .1, size = 1, position = position_dodge(.9)
+  ) +
+  ylab("proportion WT diameter") +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.02)),
+    limits = c(0, 6.5)
+  ) +
+  theme_bw() +
+  theme(legend.position = c(.9, .85))
+```
+there are relatively few differences between the strains and WT when glucose is added to the media. Even trmB-glu cells are motile.largest motility difference in tbsP-glu, suggesting that tbsP represses motility in -glu conditions. Double deletion phenocopies. 
+
+look at outliers
+```{r, fig.width=12, warning=FALSE, message=FALSE}
+in2 %>%
+  group_by(filename, plate, condition, strain2) %>%
+  summarise(average = mean(area_in)) %>%
+  filter(condition != "tbsP+noglu" | plate != 3) %>%
+  separate(condition, c("strain", "condition")) -> tmp3
+
+tmp3 %>%
+  ggplot(., ) +
+  geom_col_pattern(aes(y = average, x = condition, fill = as.character(plate), pattern_fill = strain2),
+    stat = "identity", position = "dodge",
+    colour  = "black"
+  ) +
+  facet_wrap(~strain) +
+  theme_bw()
+```
+tbsP+glu plate 1
+trmB+glu and noglu plate 3
+trmBtbsP+glu plate 1
+tbsP+noglu plate 1
+
+```{r, message=FALSE, warning=FALSE}
+in2 %>%
+  group_by(filename, plate, condition, strain2) %>%
+  summarise(average = mean(area_in)) %>%
+  filter(condition != "tbsP+noglu" | plate != 3) %>%
+  group_by(filename, plate, condition) %>%
+  summarise(ratio = average[strain2 == "mut"] / average[strain2 == "WT"]) -> rats
+
+t.test(filter(rats, condition == "tbsP+glu")$ratio, filter(rats, condition == "tbsP+noglu")$ratio)
+t.test(filter(rats, condition == "trmBtbsP+glu")$ratio, filter(rats, condition == "trmBtbsP+noglu")$ratio)
+t.test(filter(rats, condition == "trmB+glu")$ratio, filter(rats, condition == "trmB+noglu")$ratio)
+```
+
+tbsP and trmBtbsP are sig different between plus and minus glucose
+
+# Make final figure for the manuscript
+```{r, message=FALSE, warning=FALSE}
+strain.colors <- c(trmB = "#35B779", trmBtbsP = "#A6A560", tbsP = "#E79A51")
+condition.colors <- c(glu = "grey80", noglu = "white")
+
+in2 %>%
+  group_by(filename, plate, condition, strain2) %>%
+  summarise(average = mean(area_in)) %>%
+  filter(condition != "tbsP+noglu" | plate != 3) %>%
+  group_by(filename, plate, condition) %>%
+  summarise(ratio = average[strain2 == "mut"] / average[strain2 == "WT"]) %>%
+  group_by(condition) %>%
+  summarise(
+    avg_ratio = mean(ratio),
+    sd_ratio = sd(ratio)
+  ) %>%
+  separate(condition, c("strain", "condition")) -> tmp2
+
+pdf("motility.graph.pdf", width = 4, height = 4)
+
+ggplot(data = tmp2, aes(y = avg_ratio, x = strain, fill = condition, color = strain)) +
+  geom_hline(yintercept = 1, color = "grey", linetype = "dashed", size = 1) +
+  geom_bar(stat = "identity", position = "dodge", size = 1.5) +
+  geom_errorbar(aes(ymin = avg_ratio - sd_ratio, ymax = avg_ratio + sd_ratio),
+    width = .1, size = 1, position = position_dodge(.9)
+  ) +
+  ylab("proportion WT diameter") +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.02)),
+    limits = c(0, 6.5)
+  ) +
+  theme_bw() +
+  theme(legend.position = c(.9, .85)) +
+  scale_color_manual(values = strain.colors) +
+  scale_fill_manual(values = condition.colors)
+
+dev.off()
+```
