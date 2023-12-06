@@ -1,0 +1,66 @@
+---
+title: "02_schiller_gene_list"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+supp2 <- read_xlsx("02_schiller_overlap/2023_biorxiv_supp/media-2.xlsx", sheet = 3) # sig abuncance difference for wild type between early log and late log as well as at least one shape-specific comparison
+supp3 <- read_xlsx("02_schiller_overlap/2023_biorxiv_supp/media-3.xlsx")[c(2, 9)] %>% # clusters
+  filter(cluster == 11 | cluster == 12 | cluster == 14)
+supp4 <- read_xlsx("02_schiller_overlap/2023_biorxiv_supp/media-4.xlsx", sheet = 3) # sig abundance differences for wild type between early log and late log as well as at least one shape-specific comparison
+
+annotations <- read_xlsx("02_schiller_overlap/2023_biorxiv_supp/media-3.xlsx")[9]
+```
+
+wrangle to get locus tags
+```{r}
+supp2 %>%
+  separate_longer_delim(`Protein ID`, delim = "<|>") %>%
+  separate_wider_delim(`Protein ID`, delim = " [", names = c("old_locus_tag", "annotation")) %>%
+  separate_wider_delim(annotation, delim = "] ", names = c("uniprot", "annotation")) %>%
+  mutate(analysis_type = "JK3_cetZ1") -> supp2.1
+
+supp3 %>%
+  separate_longer_delim("names", delim = "<|>") %>%
+  separate_wider_delim(names, delim = " [", names = c("old_locus_tag", "annotation")) %>%
+  separate_wider_delim(annotation, delim = "] ", names = c("uniprot", "annotation")) %>%
+  mutate(analysis_type = paste("clusters", cluster, sep = "_")) -> supp3.1
+
+annotations %>%
+  separate_longer_delim("names", delim = "<|>") %>%
+  separate_wider_delim(names, delim = " [", names = c("old_locus_tag", "annotation"), too_many = "merge") %>%
+  separate_wider_delim(annotation, delim = "] ", names = c("uniprot", "annotation"), too_many = "merge") %>%
+  distinct() -> annotations1
+
+supp4 %>%
+  separate_longer_delim(`Protein ID`, delim = "<|>") %>%
+  separate_wider_delim(`Protein ID`, delim = " [", names = c("old_locus_tag", "annotation")) %>%
+  separate_wider_delim(annotation, delim = "] ", names = c("uniprot", "annotation")) %>%
+  mutate(analysis_type = "rdfA_ddfA") -> supp4.1
+```
+
+```{r}
+full_join(supp2.1[c(1:3, 20)], supp4.1[c(1:3, 14)], by = c("old_locus_tag", "uniprot", "annotation")) -> tmp
+
+full_join(tmp, supp3.1[c(2:5)], by = c("old_locus_tag", "uniprot", "annotation")) -> all.genes
+```
+
+```{r}
+all.genes[c(1, 4:6)] %>%
+  pivot_longer(!old_locus_tag, names_to = "supp_file", values_to = "analysis") %>%
+  drop_na() -> all.genes2
+
+all.genes2 %>%
+  pivot_wider(names_from = supp_file, values_from = analysis) %>%
+  unnest() %>%
+  distinct() %>%
+  arrange(old_locus_tag) -> all.genes2
+
+all.genes3 <- inner_join(all.genes2, annotations1)
+write_csv(all.genes3, "02_schiller_overlap/02_schiller2023_list.csv")
+```

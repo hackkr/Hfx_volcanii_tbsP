@@ -1,0 +1,44 @@
+---
+title: "02b_motility"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+sch <- read_csv("02_schiller_overlap/02_schiller2023_list.csv")
+
+gff.df <- read_csv("000_20230911_hvo/genomic_gff_key.csv")
+trmB <- read_csv("01_deseq2_output/trmB_interaction_all.csv") %>%
+  filter(padj <= 0.01) %>%
+  mutate(model = "TrmB interaction")
+tbsP <- read_csv("01_deseq2_output/tbsP_interaction_all.csv") %>%
+  filter(padj <= 0.01) %>%
+  mutate(model = "TbsP interaction")
+tbsP_gen <- read_csv("01_deseq2_output/tbsP_genotype_all.csv") %>%
+  filter(padj <= 0.01) %>%
+  mutate(model = "TbsP genotype")
+tbsP_degs <- full_join(tbsP[c(1, 9, 11)], tbsP_gen[c(1, 9, 11)], by = c("locus_tag", "old_locus_tag"))
+
+sch <- left_join(sch, gff.df[c(3, 4)])
+```
+
+```{r}
+inner_join(tbsP_degs, sch) -> tP
+write_csv(tP, "02_schiller_overlap/tbsP_overlap.csv")
+inner_join(trmB[c(1, 9, 11)], sch) -> tB
+write_csv(tB, "02_schiller_overlap/trmB_overlap.csv")
+```
+
+```{r}
+tP
+tbsP[tbsP$locus_tag %in% tP$locus_tag, ] # genes potentially involved in -glucose hypermotility: ppsA, acs (0894), 2031 implicated in sugar metabolism. AlgJ not included in schiller data. nothing near peaks... what's the effect in schiller? whats the direction of expression change in our data?
+tbsP_gen[tbsP_gen$locus_tag %in% tP$locus_tag, ]
+```
+
+```{r}
+tB
+trmB[trmB$locus_tag %in% tB$locus_tag, ]
+```

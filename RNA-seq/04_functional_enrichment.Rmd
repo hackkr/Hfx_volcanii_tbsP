@@ -1,0 +1,251 @@
+ ---
+title: "Functional enrichment of DEGs"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+
+Annotating DEGs!
+```{r}
+# BiocManager::install(c("GenomicRanges","rtracklayer", "ChIPseeker", "IRanges"))
+```
+
+```{r}
+library(GenomicFeatures)
+library(GenomicRanges)
+library(rtracklayer)
+library(tidyverse)
+```
+
+#part 0: Set up functions
+```{r}
+motif.coords <- function(fimo, seq_names, motif.start, motif.stop) {
+  # data wrangle to create start and stop columns
+  tmp <- str_split(seq_names, ":")
+  tmp <- data.frame(Reduce(rbind, tmp), stringsAsFactors = F)
+  tmp2 <- str_split(tmp$X2, "-")
+  tmp2 <- data.frame(Reduce(rbind, tmp2), stringsAsFactors = F)
+
+  # add motif start/stop from chromosomal start stop to get motif genomic location
+  tmp2$X2 <- as.numeric(tmp2$X1) + motif.stop
+  tmp2$X1 <- as.numeric(tmp2$X1) + motif.start
+  fimo <- data.frame("chr" = tmp$X1, "start" = tmp2$X1, "end" = tmp2$X2, fimo[, -c(2, 3, 4)], stringsAsFactors = F)
+  return(fimo)
+}
+
+# takes GRange object and annotates items if they overlap with a 250bp promoter or CDS of loaded genome. genome names are hard coded currently.
+fimo.annotate.pro <- function(fimo, reduce = F, ignore.strand = F) {
+  if (reduce == T & ignore.strand == T) {
+    fimo <- reduce(fimo, ignore.strand = T)
+  }
+  if (reduce == T & ignore.strand == F) {
+    fimo <- reduce(fimo, ignore.strand = F)
+  }
+
+  # get motifs that overlap with promoter regions and CDS. object hitList
+  GenomicRanges::findOverlaps(pro250, fimo, ignore.strand = T, minoverlap = 1) -> promoters
+
+  prolist <- fimo[subjectHits(promoters)]
+  prolist$type <- rep("promoter", length(prolist))
+  pintersect(fimo[subjectHits(promoters)], pro250[queryHits(promoters)]) -> overlaps
+  prolist$overlap <- width(overlaps)
+  prolist$gene_id <- pro250[queryHits(promoters)]$gene_id
+
+  # convert seperate IRanges to Dataframes
+  as.data.frame(prolist) %>%
+    distinct(.keep_all = T) %>%
+    dplyr::rename(locus_tag = gene_id) -> final
+
+  # merge with gff information (get NCBI annotations and locus names)
+  gff.df[gff.df$locus_tag %in% final$locus_tag, ] -> tmp
+  tmp[c(2, 3, 4, 10)] -> tmp2
+  left_join(final, tmp2, by = "locus_tag") %>% arrange(locus_tag) -> final
+  return(final)
+}
+
+# Calculate statistical information about the cogs represented in the list of genes using the function below.
+# Cogtest: three inputs to this function:
+# 1) list of gene names from the cluster (namelist)
+# 2) COG file
+# 3) p-value cutoff
+# 4) method for multiple testing correction
+cogtest <- function(namelist, cogfile, pvalue, method = "fdr", cutoff = 5) {
+  cogs <- subset(cogfile, is.element(cogfile$locus_tag, unique(namelist$locus_tag)) == TRUE)
+  clust <- table(cogs$funclass_name)
+  resm <- matrix(0, length(clust), 4) # create 0 matrix
+  res <- data.frame(resm) # make 0 df
+  rownames(res) <- names(clust)
+  colnames(res) <- c("probability", "expect", "count", "p_adjust")
+  all <- table(cogfile$funclass_name)
+  for (i in 1:length(clust)) { # calc expected frequencies and pval by hypergeo and append to DF
+    res[i, 1] <- phyper(clust[i], all[i], sum(all) - all[i], nrow(cogs), lower.tail = F)
+    res[i, 2] <- all[i] * (nrow(cogs) / sum(all))
+    res[i, 3] <- clust[i]
+  }
+  # multiple testing correction:
+  res$p_adjust <- signif(p.adjust(res$probability, method = method), digits = 4)
+  res$probability <- signif(res$probability, digits = 4)
+
+  fin <- subset(res, p_adjust <= pvalue & count >= cutoff)
+  fin <- cbind("COG" = rownames(fin), fin, stringsAsFactors = F)
+  row.names(fin) <- NULL
+  return(fin)
+}
+
+# Note: the COGcategory name must be entered in quotes and add a space to the end of the category name of interest, e.g. 'transport '
+## Use the following function to look at the genes in your cluster associated with a particular COG
+cogset <- function(namelist, cogfile, COGcategory) {
+  subset(cogfile, is.element(cogfile$locus_tag, namelist$locus_tag) & is.element(cogfile$funclass_name, COGcategory) == TRUE)
+}
+```
+
+```{r, message=F}
+# load arcogs. file parsed by AKS
+hvo.cogs <- read.delim("000_20230911_hvo/arcogs-14-18.hvo.updated.schronheit.txt", sep = "\t")
+
+# load DEGs+clusters
+trmB <- read_csv("03_clustered_DEGs/03_trmB_DEG_clustered.csv")
+trmB_degs <- read_csv("01_deseq2_output/trmB_interaction_all.csv") %>%
+  filter(padj <= 0.01)
+
+tbsP <- read_csv("01_deseq2_output/tbsP_genotype_all.csv") %>%
+  filter(padj <= 0.01) %>%
+  mutate(type = "genotype")
+tbsP_degs <- read_csv("01_deseq2_output/tbsP_interaction_all.csv") %>%
+  filter(padj <= 0.01) %>%
+  mutate(type = "interaction")
+tbsP_degs <- rbind(tbsP_degs, tbsP)
+tbsP <- read_csv("03_clustered_DEGs/03_tbsP_DEG_clustered.csv")
+
+
+# load in genome info, for annotating.
+gff <- GenomicFeatures::makeTxDbFromGFF("000_20230911_hvo/genomic.gff", format = "gff")
+gff.df <- read_csv("000_20230911_hvo/genomic_gff_key.csv")
+hvo <- rtracklayer::import.gff("000_20230911_hvo/genomic.gff")
+hvo <- hvo[hvo$type == "gene"]
+hvo <- hvo[, -c(1:15, 18:35)]
+
+# subset whole genome gff into promoter only and gene only structures
+(genes.only <- genes(gff, columns = c("gene_id")))
+
+# get promoter regions
+pro250 <- promoters(genes.only, upstream = 250, downstream = 0) ## Warning: this encroaches on nearby CDS
+pro250$type <- rep("promoter", length(pro250))
+
+# merge end of chr info with genes
+genes.only$type <- rep("gene", length(genes.only))
+
+# non coding regions of the genome
+IG <- gaps(GenomicRanges::reduce(genes.only, ignore.strand = T))
+
+findOverlaps(pro250, IG, ignore.strand = T) -> pros
+pintersect(pro250[queryHits(pros)], IG[subjectHits(pros)]) -> trimmed.pro
+trimmed.pro <- trimmed.pro[, 1:2]
+names(trimmed.pro) <- NULL
+
+as.data.frame(pro250)
+as.data.frame(trimmed.pro)
+
+# regenerate IG ranges to respect promoter regions
+ig.only <- gaps(GenomicRanges::reduce(c(genes.only, trimmed.pro), ignore.strand = T))
+```
+
+```{r}
+# TbsP:
+tbsP %>% filter(cluster == 1) -> tbsP1 # 36, all repressed interaction
+cogtest(tbsP1, hvo.cogs, 0.05, cutoff = 5)
+cogset(tbsP1, hvo.cogs, "Amino acid transport and metabolism") %>% select(c(1, 11, 12))
+cogset(tbsP1, hvo.cogs, "Carbohydrate transport and metabolism") %>% select(c(1, 11, 12))
+cogset(tbsP1, hvo.cogs, "Lipid transport and metabolism") %>% select(c(1, 11, 12))
+
+tbsP %>% filter(cluster == 2) -> tbsP2 # 4, all activated mixed
+cogtest(tbsP2, hvo.cogs, 1, cutoff = 1)
+
+tbsP %>% filter(cluster == 3) -> tbsP3 # 25, mostly activated, genotype
+cogtest(tbsP3, hvo.cogs, 0.05, cutoff = 5)
+cogset(tbsP3, hvo.cogs, "Amino acid transport and metabolism") %>% select(c(1, 11, 12))
+
+tbsP %>% filter(cluster == 4) -> tbsP4 # putative shared targets
+cogtest(tbsP4, hvo.cogs, 1, cutoff = 1)
+
+tbsP %>% filter(cluster == 5) -> tbsP5 # ATP binding, mixed
+cogtest(tbsP5, hvo.cogs, 1, cutoff = 1)
+cogset(tbsP5, hvo.cogs, "Carbohydrate transport and metabolism") %>% select(c(1, 11, 12))
+
+tbsP %>% filter(cluster == 6) -> tbsP6 # all repressed genotype, CRISPR
+cogtest(tbsP6, hvo.cogs, 1, cutoff = 1)
+cogset(tbsP6, hvo.cogs, "Defense mechanisms") %>% select(c(1, 11, 12))
+tbsP_degs[tbsP_degs$locus_tag %in% tbsP6$locus_tag, ]
+```
+
+```{r}
+# trmB:
+trmB %>% filter(cluster == 1) -> trmB1 # activated
+cogtest(trmB1, hvo.cogs, 0.05, cutoff = 5)
+cogset(trmB1, hvo.cogs, "Nucleotide transport and metabolism") %>% select(c(1, 11, 12))
+# cogset(trmB1, hvo.cogs, "Transcription") %>% select(c(1,11,12))
+
+trmB %>% filter(cluster == 2) -> trmB2 # activated
+cogtest(trmB2, hvo.cogs, 0.05, cutoff = 5)
+cogset(trmB2, hvo.cogs, "Energy production and conversion") %>% select(c(1, 11, 12)) # NADH dehydrogenase, ATP synthase
+
+trmB %>% filter(cluster == 3) -> trmB3 # repressed
+cogtest(trmB3, hvo.cogs, 0.05, cutoff = 5)
+cogset(trmB3, hvo.cogs, "Amino acid transport and metabolism") %>% select(c(1, 11, 12))
+
+trmB %>% filter(cluster == 4) -> trmB4
+cogtest(trmB4, hvo.cogs, 0.05, cutoff = 5)
+cogset(trmB4, hvo.cogs, "Carbohydrate transport and metabolism") %>% select(c(1, 11, 12))
+cogset(trmB4, hvo.cogs, "Cell wall/membrane/envelope biogenesis") %>% select(c(1, 11, 12))
+cogset(trmB4, hvo.cogs, "Coenzyme transport and metabolism") %>% select(c(1, 11, 12))
+
+trmB %>% filter(cluster == 5) -> trmB5 # repressed (shared)
+cogtest(trmB5, hvo.cogs, 1, cutoff = 1)
+cogset(trmB5, hvo.cogs, "Carbohydrate transport and metabolism") %>% select(c(1, 11, 12))
+
+(trmB %>% filter(cluster == 6) -> trmB6) # repressed direct candidates (gapI, KDGA, pepC, gdh, sugar transport)
+cogtest(trmB6, hvo.cogs, 1, cutoff = 1)
+cogset(trmB6, hvo.cogs, "Carbohydrate transport and metabolism") %>% select(c(1, 11, 12))
+
+trmB %>% filter(cluster == 7) -> trmB7 # mixed, AA transport
+cogtest(trmB7, hvo.cogs, 1, cutoff = 3)
+cogset(trmB7, hvo.cogs, "Amino acid transport and metabolism") %>% select(c(1, 11, 12))
+cogset(trmB7, hvo.cogs, "Carbohydrate transport and metabolism") %>% select(c(1, 11, 12))
+
+trmB %>% filter(cluster == 8) -> trmB8 # activated
+cogtest(trmB8, hvo.cogs, 1, cutoff = 1)
+trmB_degs[trmB_degs$locus_tag %in% trmB8$locus_tag, ]
+
+trmB %>% filter(cluster == 9) -> trmB9 # repressed
+cogtest(trmB9, hvo.cogs, 1, cutoff = 1)
+gff.df[gff.df$locus_tag %in% trmB9$locus_tag, ]
+```
+
+#extract DEG promoters for bedtools/MEME/FIMO
+get promoters by locus. export bedfile for extracting promoter seqs for motif discovery.
+```{r}
+# get promoter regions
+pro_trmB4 <- pro250[pro250$gene_id %in% trmB4$locus_tag]
+pro_trmB5 <- pro250[pro250$gene_id %in% trmB5$locus_tag]
+pro_trmB6 <- pro250[pro250$gene_id %in% trmB6$locus_tag]
+# export
+for (i in 4:6) {
+  a <- paste("pro_trmB", i, sep = "")
+  file <- paste("05_promoter_MEME/", a, ".bed", sep = "")
+  rtracklayer::export(get(a), file, format = "bed")
+}
+
+pro_trmB4 <- trimmed.pro[trimmed.pro$gene_id %in% trmB4$locus_tag]
+pro_trmB5 <- trimmed.pro[trimmed.pro$gene_id %in% trmB5$locus_tag]
+pro_trmB6 <- trimmed.pro[trimmed.pro$gene_id %in% trmB6$locus_tag]
+# export
+for (i in 4:6) {
+  a <- paste("pro_trmB", i, sep = "")
+  file <- paste("05_promoter_MEME/trimmed_", a, ".bed", sep = "")
+  rtracklayer::export(get(a), file, format = "bed")
+}
+
+# in terminal with bedtools loaded, run:
+# bedtools getfasta -fi ../GCF_000223905.1_ASM22390v1_genomic.fna -bed promoters.bed > promoter_seqs.fna
+# output beds should be sorted, but if get error, run bedtools sort -i <BED>
+```

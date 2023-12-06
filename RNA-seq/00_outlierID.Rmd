@@ -1,0 +1,337 @@
+---
+title: "00_outlier_ID"
+author: "Rylee Hackley"
+date: "OCT 2023"
+output: github_document
+---
+
+```{r, message=F, warning=FALSE}
+#BiocManager::install("limma")
+
+library(tidyverse)
+library(ggpubr)
+library(DESeq2)
+library(viridis)
+library(RColorBrewer)
+library(pheatmap)
+library(rrcov)
+```
+
+load ggf data info for informative gene descriptions
+```{r, message=FALSE}
+gff.df <- read_csv("000_20230911_hvo/genomic_gff_key.csv")
+```
+
+outliers removed prior to analysis: dtrmBdtbsP_4hpGlu_S65 (no reads in file. was contributing too many zeros, affecting model fit)
+```{r, message=FALSE}
+counts_data <- read_csv("00_deseq2_input/00_combined_data.csv")
+counts_meta <- read_csv("00_deseq2_input/00_combined_meta.csv")
+
+counts_cols <-data.frame(row.names = counts_meta$sample_name, counts_meta[-1])
+
+#correlation between the two "reference" sequences
+ggscatter(counts_data, x = "HVO_DS2_reference", y = "HV35_ypc18_S15", add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = "pearson") 
+
+# all genes that are highly abundant in 2019 ref are 16S and 23S rRNA. remove.
+rrna <- c("HVO_RS13025", "HVO_RS13015", "HVO_RS18910", "HVO_RS18920")
+counts_data <- counts_data[!(counts_data$Geneid %in% rrna),]
+
+ggscatter(counts_data, x = "HVO_DS2_reference", y = "HV35_ypc18_S15", add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = "pearson") 
+ggplot(counts_data, aes(x=log10(HVO_DS2_reference+1), y=log10(HV35_ypc18_S15+1))) +
+  geom_point() +
+  geom_smooth(method=lm)
+
+counts_mat <- as.matrix(counts_data[-c(1:6)])
+rownames(counts_mat) <- counts_data$Geneid
+dim(counts_mat)
+
+#remove reference samples
+counts_mat <- counts_mat[,-c(1, 49)]
+counts_cols <- counts_cols[-c(1, 49),]
+```
+
+```{r}
+dds.mydata <- DESeqDataSetFromMatrix(countData = counts_mat, colData = counts_cols, design = ~batch+glucose+genotype+glucose:genotype)
+
+# Assign baselines for the comparisons
+dds.mydata$glucose <- relevel(dds.mydata$glucose, ref = "pGlu")
+dds.mydata$genotype <- relevel(dds.mydata$genotype, ref = "WT")
+
+# Estimate size factors error
+rs <- rowSums(counts(dds.mydata) == 0 )
+table(rs)
+
+# Estimate Size Factors to inspect the raw count data which is generated from various lanes and bio reps. 
+dds.mydata <- estimateSizeFactors(dds.mydata)
+sizeFactors(dds.mydata)
+mydf <- sizeFactors(dds.mydata) %>%
+  as.data.frame %>%
+  rownames_to_column
+colnames(mydf)[2] <- "sizefac"
+ggplot(mydf, aes(rowname, sizefac)) + geom_point() + theme(axis.text.x = element_text(face="bold", color="blue", angle=90, hjust = 1))
+```
+
+### Differential Expression Analysis
+```{r diffexpr_QC,warning=FALSE}
+ddsDE <- DESeq(dds.mydata)
+
+#Estimate of sample quality; a plot of per-gene dispersion estimates together with the fitted mean-dispersion relationship
+plotDispEsts(ddsDE)
+
+# Total number of raw counts per sample
+colSums(counts(ddsDE)) %>%
+  as.data.frame %>%
+  rownames_to_column -> mydf.raw.count
+
+colnames(mydf.raw.count)[2] <- "whole.gene.count"
+
+# Normalizing counts by size factor
+colSums(counts(ddsDE, normalized = T))  %>%
+  as.data.frame %>%
+  rownames_to_column -> mydf.norm.count
+
+colnames(mydf.norm.count)[2] <- "whole.gene.norm.count"
+
+ggplot(mydf.norm.count, aes(rowname, whole.gene.norm.count)) + geom_point() + theme(axis.text.x = element_text(face="bold", color="blue", angle=90, hjust = 1))
+```
+
+### Clustering: variance stabilizing transformation and batch-effect correction
+```{r clustering, warning=FALSE, fig.height=5, fig.width=5}
+vsd=vst(ddsDE)
+assay(vsd)=limma::removeBatchEffect(assay(vsd),vsd$batch)
+
+sampleDists <- dist(t(assay(vsd)))
+sampleDistMatrix <- as.matrix(sampleDists)
+colnames(sampleDistMatrix) <- paste(vsd$genotype, vsd$glucose, sep="-")
+colors <- colorRampPalette(rev(brewer.pal(9, "Blues")) )(150)
+
+#Heatmap
+pheatmap(sampleDistMatrix,clustering_distance_rows=sampleDists,clustering_distance_cols=sampleDists,col=colors)
+
+#Principal Components Analysis
+plotPCA(vsd, intgroup = c("genotype", "glucose"), )
+```
+
+Check that genotype matches label
+```{r}
+# TbsP
+d <- plotCounts(ddsDE, gene="HVO_RS18535",  intgroup=c("genotype", "glucose"), 
+                returnData = T, transform = F, normalized = F)
+d %>%
+  arrange(genotype, glucose)
+
+# TrmB
+d <- plotCounts(ddsDE, gene="HVO_RS17680",  intgroup=c("genotype", "glucose"), 
+                returnData = T, transform = F, normalized = F)
+d %>%
+  arrange(genotype, glucose)
+```
+
+
+```{r,warning=FALSE}
+# Convert the raw count to the normalized count
+normalized_counts <- as.data.frame(counts(dds.mydata, normalized=TRUE))
+normbatch <- as.data.frame(limma::removeBatchEffect(log2(counts(dds.mydata, normalized=TRUE)+1), dds.mydata$SE_PE))
+```
+
+look at pairwise correlations of batch corrected counts across all sample groups:
+```{r, message=FALSE, fig.width=10, fig.height=10}
+library(psych)
+
+filter(counts_cols, counts_cols$genotype == "WT" & counts_cols$glucose == "mGlu") %>%
+  rownames() -> name
+normbatch %>% select(name) -> WT
+pairs.panels(WT,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+
+filter(counts_cols, counts_cols$genotype == "WT" & counts_cols$glucose == "pGlu") %>%
+  rownames() -> name
+normbatch %>% select(name) -> WT
+pairs.panels(WT,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+
+filter(counts_cols, counts_cols$genotype == "trmB" & counts_cols$glucose == "mGlu") %>%
+  rownames() -> name
+normbatch %>% select(name) -> trmB
+pairs.panels(trmB,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+
+filter(counts_cols, counts_cols$genotype == "trmB" & counts_cols$glucose == "pGlu") %>%
+  rownames() -> name
+normbatch %>% select(name) ->trmB
+pairs.panels(trmB,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+```
+
+```{r, fig.width=10, fig.height=10}
+filter(counts_cols, counts_cols$genotype == "tbsP" & counts_cols$glucose == "mGlu") %>%
+  rownames() -> name
+normalized_counts %>% select(name) -> tbsP
+pairs.panels(tbsP,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+
+filter(counts_cols, counts_cols$genotype == "tbsP" & counts_cols$glucose == "pGlu") %>%
+  rownames() -> name
+normbatch %>% select(name) ->tbsP
+pairs.panels(tbsP,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+
+filter(counts_cols, counts_cols$genotype == "DD" & counts_cols$glucose == "mGlu") %>%
+  rownames() -> name
+normbatch %>% select(name) -> DD
+pairs.panels(DD,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+
+filter(counts_cols, counts_cols$genotype == "DD" & counts_cols$glucose == "pGlu") %>%
+  rownames() -> name
+normalized_counts %>% select(name)-> DD
+pairs.panels(DD,
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             method = "pearson", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = T,             # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             hist.col = 4,       # Histograms color
+             ci = F)          # If TRUE, adds confidence intervals
+```
+
+```{r}
+counts_cols
+```
+
+
+remove outliers
+```{r, fig.height=8, fig.width=8}
+counts_mat2 <- as.matrix(counts_data[-1]) 
+rownames(counts_mat2) <- counts_data$rowname
+
+counts_mat2 <- counts_mat[,-c(31:33,36,46,47)]
+counts_cols2 <- counts_cols[-c(31:33,36,46,47),] %>% as.matrix()
+
+dds.mydata <- DESeqDataSetFromMatrix(countData = counts_mat2, colData = counts_cols2, design = ~ batch+glucose+genotype+glucose:genotype)
+dim(counts_mat2)
+
+# Assign baselines for the comparisons
+dds.mydata$glucose <- relevel(dds.mydata$glucose, ref = "pGlu")
+dds.mydata$genotype <- relevel(dds.mydata$genotype, ref = "WT")
+
+# Estimate Size Factors to inspect the raw count data which is generated from various lanes and bio reps. 
+dds.mydata <- estimateSizeFactors(dds.mydata)
+sizeFactors(dds.mydata)
+ddsDE <- DESeq(dds.mydata)
+
+#Estimate of sample quality; a plot of per-gene dispersion estimates together with the fitted mean-dispersion relationship
+plotDispEsts(ddsDE)
+
+vsd=vst(ddsDE)
+assay(vsd)=limma::removeBatchEffect(assay(vsd),vsd$SE_PE)
+
+sampleDists <- dist(t(assay(vsd)))
+sampleDistMatrix <- as.matrix(sampleDists)
+colnames(sampleDistMatrix) <- paste(vsd$genotype, vsd$glucose, sep="-")
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+
+pheatmap(sampleDistMatrix,clustering_distance_rows=sampleDists,clustering_distance_cols=sampleDists,col=colors)
+
+#Principal Components Analysis
+plotPCA(vsd, intgroup = c("genotype", "glucose"), )
+plotPCA(vsd, intgroup = "batch")
+```
+
+get normalized counts for tbsP for all samples:
+```{r}
+d <- plotCounts(ddsDE, gene="HVO_RS18535",  intgroup=c("genotype", "glucose", "batch"), 
+                returnData = T, transform = T, normalized = T)
+d %>%
+  ggplot(., aes(x=glucose, y=count, fill=genotype)) +
+  geom_boxplot(alpha =0.8)+geom_point(position = position_dodge(width=0.75), size = 2) +
+  labs(title = "HVO_RS18535, tbsP", y = "normalized counts") +
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+d %>% arrange(genotype, batch, glucose)
+results(ddsDE, contrast=list("glucosemGlu.genotypetrmB"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01) %>%
+  data.frame() %>% rownames_to_column(var="locus_tag") %>% as_tibble() -> tmp
+tmp[tmp$locus_tag == "HVO_RS18535",] %>% na.omit()
+```
+
+get normalized counts for trmB for all samples:
+```{r}
+d <- plotCounts(ddsDE, gene="HVO_RS17680",  intgroup=c("genotype", "glucose", "batch"), 
+                returnData = T, transform = T, normalized = T)
+d %>%
+  ggplot(., aes(x=glucose, y=count, fill=genotype)) +
+  geom_boxplot(alpha =0.8)+geom_point(position = position_dodge(width=0.75), size = 2) + 
+  #geom_point(position=position_jitter(w=0.25,h=0), size = 3) + 
+  labs(title = "HVO_RS17680, trmB", y = "normalized counts") +
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+results(ddsDE, contrast=list("glucosemGlu.genotypetrmB"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01) %>%
+  data.frame() %>% rownames_to_column(var="locus_tag") %>% as_tibble() -> tmp
+tmp[tmp$locus_tag == "HVO_RS17680",] %>% na.omit()
+```
+remove outliers
+```{r}
+normalized_counts <- as.data.frame(counts(dds.mydata, normalized=TRUE))
+write.csv(normalized_counts, "01_deseq2_output/normalised_counts.csv", row.names = T, col.names = T)
+
+normbatch <- as.data.frame(limma::removeBatchEffect(log2(counts(dds.mydata, normalized=TRUE)+1), dds.mydata$SE_PE))
+write.csv(normbatch, "01_deseq2_output/batch_norm_counts.csv", row.names = T, col.names = T)
+
+write.csv(counts_mat2, "00_deseq2_input/00_combined_data_out.csv", row.names = T)
+counts_cols2 %>%
+  as.data.frame() %>%
+  rownames_to_column() -> counts_cols2
+write.csv(counts_cols2, "00_deseq2_input/00_combined_meta_out.csv")
+```

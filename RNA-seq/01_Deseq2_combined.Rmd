@@ -1,0 +1,316 @@
+---
+title: "01_Deseq2_outliers_DEGs"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+```{r, message=F}
+library(tidyverse)
+library(ggpubr)
+library(viridis)
+library(pheatmap)
+library(rrcov)
+library(DESeq2)
+library(RColorBrewer)
+```
+
+load gff data info for informative gene descriptions
+```{r, message=FALSE}
+gff_df <- read_csv("000_20230911_hvo/genomic_gff_key.csv")
+
+counts_data <- read_csv("00_deseq2_input/00_combined_data_out.csv")
+counts_mtx <- as.matrix(counts_data[-1])
+rownames(counts_mtx) <- counts_data$...1
+
+counts_cols <- read_csv("00_deseq2_input/00_combined_meta_out.csv")
+```
+
+### Differential Expression Analysis
+```{r, message=FALSE, warning=FALSE}
+dds.mydata <- DESeqDataSetFromMatrix(countData = counts_mtx, colData = counts_cols[-1], design = ~ batch + glucose + genotype + glucose:genotype)
+
+# Assign baselines for the comparisons
+dds.mydata$glucose <- relevel(dds.mydata$glucose, ref = "mGlu")
+dds.mydata$genotype <- relevel(dds.mydata$genotype, ref = "WT")
+
+# Estimate Size Factors to inspect the raw count data which is generated from various lanes and bio reps.
+dds.mydata <- estimateSizeFactors(dds.mydata)
+
+mydf <- sizeFactors(dds.mydata) %>%
+  as.data.frame() %>%
+  rownames_to_column()
+colnames(mydf)[2] <- "sizefac"
+ggplot(mydf, aes(rowname, sizefac)) +
+  geom_point() +
+  theme(axis.text.x = element_text(face = "bold", color = "blue", angle = 90, hjust = 1))
+
+ddsDE <- DESeq(dds.mydata)
+
+# Total number of raw counts per sample
+colSums(counts(ddsDE)) %>%
+  as.data.frame() %>%
+  rownames_to_column() -> mydf.raw.count
+colnames(mydf.raw.count)[2] <- "whole.gene.count"
+
+# Normalizing counts by size factor
+colSums(counts(ddsDE, normalized = T)) %>%
+  as.data.frame() %>%
+  rownames_to_column() -> mydf.norm.count
+colnames(mydf.norm.count)[2] <- "whole.gene.norm.count"
+
+ggplot(mydf.norm.count, aes(rowname, whole.gene.norm.count)) +
+  geom_point() +
+  theme(axis.text.x = element_text(face = "bold", color = "blue", angle = 90, hjust = 1))
+```
+
+### Clustering: variance stabilizing transformation and batch-effect correction
+```{r clustering, warning=FALSE, message=FALSE}
+vsd <- vst(ddsDE)
+assay(vsd) <- limma::removeBatchEffect(assay(vsd), vsd$SE_PE)
+
+sampleDists <- dist(t(assay(vsd)))
+sampleDistMatrix <- as.matrix(sampleDists)
+colnames(sampleDistMatrix) <- paste(vsd$genotype, vsd$glucose, sep = "-")
+colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+
+# Heatmap
+pheatmap(sampleDistMatrix, clustering_distance_rows = sampleDists, clustering_distance_cols = sampleDists, col = colors)
+
+# Principal Components Analysis
+plotPCA(vsd, intgroup = c("genotype", "glucose"))
+
+# Convert the raw count to the normalized count
+normalized_counts <- counts(dds.mydata, normalized = TRUE)
+normbatch <- limma::removeBatchEffect(log2(counts(ddsDE, normalized = TRUE) + 1), ddsDE$SE_PE)
+
+tmp <- counts(dds.mydata, normalized = F)
+tmp[rownames(tmp) == "HVO_RS18535", ] # max 15 reads in tbsP del strains
+tmp[rownames(tmp) == "HVO_RS17680", ] # not detected
+```
+### The effect of Glucose on the Genotype effect (combinatorial differential expression)
+```{r trmB interaction, warning=FALSE, message=FALSE}
+Res_mGlu_trmB <- results(ddsDE, contrast = list("glucosepGlu.genotypetrmB"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01)
+
+table_mGlu_trmB <- Res_mGlu_trmB %>% # Make a result table
+  data.frame() %>%
+  rownames_to_column(var = "locus_tag") %>%
+  as_tibble()
+
+# Apply significance threshold, view and export table
+table_mGlu_trmB_sig <- table_mGlu_trmB %>%
+  filter(padj < 0.01) %>%
+  filter(abs(log2FoldChange) >= 1)
+
+# Merge with gff information (get NCBI annotations and locus names)
+gff_df[gff_df$locus_tag %in% table_mGlu_trmB_sig$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_mGlu_trmB_sig, tmp, by = "locus_tag") -> table_mGlu_trmB_sig
+
+# how many are up and down regulated?
+filter(table_mGlu_trmB_sig, log2FoldChange >= 1)
+filter(table_mGlu_trmB_sig, log2FoldChange <= -1)
+
+# Volcano plot:
+mGlu_trmB_vol <- table_mGlu_trmB %>%
+  mutate(threshold_sig = padj < 0.01)
+
+ggplot(mGlu_trmB_vol) +
+  geom_point(aes(x = log2FoldChange, y = -log10(padj), colour = threshold_sig)) +
+  ggtitle("Interaction of TrmB and glucose") +
+  xlab("log2 fold change") +
+  ylab("-log10 adjusted p-value") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5), axis.title = element_text(size = rel(1.25)))
+```
+
+```{r tbsP interaction, warning=FALSE}
+Res_tbsP_glu <- results(ddsDE, contrast = list("glucosepGlu.genotypetbsP"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01)
+
+table_tbsP_glu <- Res_tbsP_glu %>% # Make a result table
+  data.frame() %>%
+  rownames_to_column(var = "locus_tag") %>%
+  as_tibble()
+
+# Apply significance threshold, view and export table
+table_tbsP_sig_glu <- table_tbsP_glu %>%
+  filter(padj < 0.01) %>%
+  filter(abs(log2FoldChange) >= 1)
+
+# Merge with gff information (get NCBI annotations and locus names)
+gff_df[gff_df$locus_tag %in% table_tbsP_sig_glu$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_tbsP_sig_glu, tmp, by = "locus_tag") -> table_tbsP_sig_glu
+
+# how many are up and down regulated?
+filter(table_tbsP_sig_glu, log2FoldChange >= 1)
+filter(table_tbsP_sig_glu, log2FoldChange <= -1)
+```
+
+```{r DD interaction, warning=FALSE}
+Res_DD <- results(ddsDE, contrast = list("glucosepGlu.genotypeDD"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01)
+
+table_mglu_DD <- Res_DD %>% # Make a result table
+  data.frame() %>%
+  rownames_to_column(var = "locus_tag") %>%
+  as_tibble()
+
+# Apply significance threshold, view and export table
+table_mglu_DD_sig <- table_mglu_DD %>%
+  filter(padj < 0.01) %>%
+  filter(abs(log2FoldChange) >= 1)
+
+# Merge with gff information (get NCBI annotations and locus names)
+gff_df[gff_df$locus_tag %in% table_mglu_DD_sig$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_mglu_DD_sig, tmp, by = "locus_tag") -> table_mglu_DD_sig
+
+# how many are up and down regulated?
+filter(table_mglu_DD_sig, log2FoldChange >= 1)
+filter(table_mglu_DD_sig, log2FoldChange <= -1)
+```
+
+### Genotype alone
+```{r genotype, warning=FALSE}
+dds.mydata2 <- DESeqDataSetFromMatrix(countData = counts_mtx, colData = counts_cols[-1], design = ~ batch + genotype)
+dds.mydata2$genotype <- relevel(dds.mydata2$genotype, ref = "WT")
+dds.mydata2 <- estimateSizeFactors(dds.mydata2)
+ddsDE2 <- DESeq(dds.mydata2)
+
+Res_tbsP <- results(ddsDE2, contrast = list("genotype_tbsP_vs_WT"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01)
+
+table_tbsP <- Res_tbsP %>% # Make a result table
+  data.frame() %>%
+  rownames_to_column(var = "locus_tag") %>%
+  as_tibble()
+
+# Apply significance threshold, view and export table
+table_tbsP_sig <- table_tbsP %>%
+  filter(padj < 0.01) %>%
+  filter(abs(log2FoldChange) >= 1)
+
+# Merge with gff information (get NCBI annotations and locus names)
+gff_df[gff_df$locus_tag %in% table_tbsP_sig$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+(left_join(table_tbsP_sig, tmp, by = "locus_tag") -> table_tbsP_sig)
+
+Res_DD <- results(ddsDE2, contrast = list("genotype_DD_vs_WT"), cooksCutoff = FALSE, independentFiltering = FALSE, lfcThreshold = 1, alpha = 0.01)
+
+table_DD <- Res_DD %>% # Make a result table
+  data.frame() %>%
+  rownames_to_column(var = "locus_tag") %>%
+  as_tibble()
+
+# Apply significance threshold, view and export table
+table_DD_sig <- table_DD %>%
+  filter(padj < 0.01) %>%
+  filter(abs(log2FoldChange) >= 1)
+
+# Merge with gff information (get NCBI annotations and locus names)
+gff_df[gff_df$locus_tag %in% table_DD_sig$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+(left_join(table_DD_sig, tmp, by = "locus_tag") -> table_DD_sig)
+```
+
+## save files
+```{r allDEGs}
+gff_df[gff_df$locus_tag %in% table_mGlu_trmB$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_mGlu_trmB, tmp, by = "locus_tag") -> table_mGlu_trmB2
+
+gff_df[gff_df$locus_tag %in% table_tbsP_glu$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_tbsP_glu, tmp, by = "locus_tag") -> table_mGlu_tbsP2
+
+gff_df[gff_df$locus_tag %in% table_tbsP$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_tbsP, tmp, by = "locus_tag") -> table_tbsP2
+
+gff_df[gff_df$locus_tag %in% table_DD$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_DD, tmp, by = "locus_tag") -> table_DD2
+
+gff_df[gff_df$locus_tag %in% table_mglu_DD$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_mglu_DD, tmp, by = "locus_tag") -> table_mGlu_DD2
+
+gff_df[gff_df$locus_tag %in% table_DD$locus_tag, ][c(2, 3, 4, 10)] -> tmp
+left_join(table_DD, tmp, by = "locus_tag") -> table_DD2
+
+write_csv(table_mGlu_trmB2, "01_deseq2_output/trmB_interaction_all.csv")
+write_csv(table_mGlu_tbsP2, "01_deseq2_output/tbsP_interaction_all.csv")
+write_csv(table_tbsP2, "01_deseq2_output/tbsP_genotype_all.csv")
+write_csv(table_mGlu_DD2, "01_deseq2_output/DD_interaction_all.csv")
+write_csv(table_DD2, "01_deseq2_output/DD_genotype_all.csv")
+```
+
+### Whats the overlap of these three results?
+```{r, message=FALSE}
+library(PerformanceAnalytics)
+library(eulerr)
+source("000_graph scripts/Eulerr_scripts_20072018.R")
+```
+
+```{r}
+group.colors <- c(WT = "magenta4", trmB = "#35B779", DD = "#A6A560", tbsP = "#E79A51")
+
+set.seed(123)
+trmb <- table_mGlu_trmB_sig$locus_tag %>% unique()
+tbsp <- c(table_tbsP_sig_glu$locus_tag, table_tbsP_sig$locus_tag) %>% unique()
+dd <- c(table_mglu_DD_sig$locus_tag) %>% unique()
+
+# all glucose dependence
+pdf("01_deseq2_output/venn3.pdf", width = 4, height = 3)
+tri.venn(three.list.overlap(trmb, tbsp, dd),
+  labs = c("TrmB interaction", "TbsP combined", "double interaction"),
+  colors = c("#35B779", "#E79A51", "#A6A560")
+)
+dev.off()
+
+print(three.list.overlap(trmb, tbsp, dd))
+# "HVO_RS07010" "HVO_RS07265" "HVO_RS08595" "HVO_RS11680" "HVO_RS14465-HVO_RS14480" "HVO_RS01000", "HVO_RS02765" "HVO_RS02770": gapII, sugar ABC transporter permease, ppsA, class I fba, 	ABC transporter, FAD-binding and (Fe-S)-binding domain-containing protein
+# uniqueone&two`: "HVO_RS16135" (PstS family phosphate ABC transporter substrate-binding protein)
+# uniqueone&three: "HVO_RS06275" (3,4-dihydroxy-2-butanone-4-phosphate synthase) "HVO_RS06315" "HVO_RS07260" (ABC transporter substrate-binding protein) "HVO_RS07815" (GMP synthase subunit A) "HVO_RS09250" (HVO_0950) "HVO_RS09900" (HVO_1083) "HVO_RS09915" (heptaprenylglyceryl phosphate synthase) "HVO_RS11885" (HVO_1488) "HVO_RS15250" (phosphoribosylaminoimidazolesuccinocarboxamide synthase) "HVO_RS21430" "HVO_RS18555" (bifunctional methylenetetrahydrofolate dehydrogenase/methenyltetrahydrofolate cyclohydrolase FolD) "HVO_RS19545" "HVO_RS01105" "HVO_RS19875" (class II aldolase/adducin family protein)
+
+# all glucose dependence
+pdf("01_deseq2_output/venn2.pdf", width = 4, height = 3)
+bi.venn(two.list.overlap(trmb, tbsp),
+  labs = c("TrmB interaction", "TbsP combined"),
+  colors = c("#35B779", "#E79A51")
+)
+dev.off()
+
+gff_df[gff_df$locus_tag %in% two.list.overlap(trmb, tbsp)$`uniqueone&two`, ]
+write_csv(x = data.frame("shared" = two.list.overlap(trmb, tbsp)$`uniqueone&two`), file = "01_deseq2_output/shared.genes.csv")
+```
+
+```{r}
+tmp <- "HVO_RS17680"
+
+d <- plotCounts(ddsDE,
+  gene = tmp, intgroup = c("genotype", "glucose"),
+  returnData = T, transform = T
+)
+d %>%
+  ggplot(., aes(x = genotype, y = count, fill = genotype)) +
+  geom_boxplot(alpha = 0.8) +
+  geom_point(position = position_dodge(width = 0.75), size = 2) +
+  labs(title = tmp, y = "normalized counts") +
+  scale_fill_manual(values = group.colors) +
+  facet_wrap(~glucose, scales = "free", ncol = 1) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) -> fig
+
+pdf("01_deseq2_output/trmB_expression.pdf", width = 4, height = 8)
+plot(fig)
+dev.off()
+
+tmp <- "HVO_RS18535"
+
+d <- plotCounts(ddsDE,
+  gene = tmp, intgroup = c("genotype", "glucose"),
+  returnData = T, transform = T
+)
+d %>%
+  ggplot(., aes(x = genotype, y = count, fill = genotype)) +
+  geom_boxplot(alpha = 0.8) +
+  geom_point(position = position_dodge(width = 0.75), size = 2) +
+  labs(title = tmp, y = "normalized counts") +
+  scale_fill_manual(values = group.colors) +
+  facet_wrap(~glucose, ncol = 2) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    legend.position = "none"
+  ) -> fig
+
+pdf("01_deseq2_output/tbsP_expression.pdf", width = 5.5, height = 3)
+plot(fig)
+dev.off()
+```
