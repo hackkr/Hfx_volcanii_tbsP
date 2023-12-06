@@ -1,0 +1,139 @@
+---
+title: "binomial test peak location"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+
+Annotating peaks
+```{r, warning=FALSE}
+# BiocManager::install(c("GenomicRanges","rtracklayer", "ChIPseeker", "IRanges"))
+
+library(tidyverse)
+library(openxlsx)
+library(GenomicFeatures)
+library(rtracklayer)
+```
+
+Load genome file
+```{r, message=FALSE, warning=FALSE}
+gff <- makeTxDbFromGFF("00_genome_files/genomic.gff",
+  format = "gff",
+  dataSource = "NCBI", organism = "Haloferax volcanii"
+)
+gff_df <- read_csv("00_genome_files/genomic_gff_key.csv")
+consensus <- read_csv("03_plot_peaks/ChIP_consensus.csv")
+consensus_gr <- makeGRangesFromDataFrame(consensus, keep.extra.columns = T)
+```
+Get GRanges of genes and promoters and intergenic regions
+```{r}
+genes.only <- genes(gff, columns = c("GENEID"))
+
+# get promoter regions
+pro250 <- promoters(genes.only, upstream = 250, downstream = 0) ## Warning: this encroaches on nearby CDS
+pro250$type <- rep("promoter", length(pro250))
+
+# merge end of chr info with genes
+genes.only$type <- rep("gene", length(genes.only))
+
+# non coding regions of the genome
+IG <- gaps(GenomicRanges::reduce(genes.only, ignore.strand = T))
+
+# overlap promoter region and IG regions to get conservative promoter ranges (that respect genic regions)
+findOverlaps(pro250, IG, ignore.strand = T) -> pros
+pintersect(pro250[queryHits(pros)], IG[subjectHits(pros)]) -> trimmed.pro
+trimmed.pro <- trimmed.pro[, 1:2]
+names(trimmed.pro) <- NULL
+
+# regenerate IG ranges to respect promoter regions
+ig.only <- gaps(GenomicRanges::reduce(c(genes.only, trimmed.pro), ignore.strand = T))
+```
+
+create peak profile
+```{r}
+GenomicRanges::findOverlaps(genes.only, consensus_gr, minoverlap = 1) -> genes
+pintersect(consensus_gr[subjectHits(genes)], genes.only[queryHits(genes)]) -> g.peaks
+g.peaks$hit <- rep("genic", length(g.peaks))
+g.peaks$name <- as.character(genes.only[queryHits(genes)]$GENEID)
+
+GenomicRanges::findOverlaps(trimmed.pro, consensus_gr, ignore.strand = T, minoverlap = 1) -> promoters
+pintersect(consensus_gr[subjectHits(promoters)], trimmed.pro[queryHits(promoters)]) -> p.peaks
+GenomicRanges::reduce(p.peaks, with.revmap = T, ignore.strand = T) -> p.peaks2
+p.peaks2$score <- p.peaks$score[sapply(p.peaks2$revmap, "[", 1)]
+p.peaks2$hit <- rep("promoter", length(p.peaks2))
+p.peaks2$name <- rep("promoter", length(p.peaks2))
+p.peaks <- p.peaks2[, -1]
+
+GenomicRanges::findOverlaps(ig.only, consensus_gr, ignore.strand = T, minoverlap = 1) -> intergeneic
+pintersect(consensus_gr[subjectHits(intergeneic)], ig.only[queryHits(intergeneic)]) -> ig.peaks
+ig.peaks$hit <- rep("intergenic", length(ig.peaks))
+ig.peaks$name <- rep("intergenic", length(ig.peaks))
+
+all <- sort(c(g.peaks, p.peaks, ig.peaks), ignore.strand = T)
+all <- split(all, all$score)
+
+# check that each peak exactly the expected width
+peak.width <- vector()
+for (i in 1:length(all)) {
+  tmp <- sum(width(all[[i]]))
+  peak.width <- append(peak.width, tmp)
+}
+peak.width
+```
+
+data wrangle gRangesList to wide df
+```{r}
+as.data.frame(all)[, -c(1:2)] %>%
+  pivot_wider(., id_cols = "score", names_from = "hit", values_from = "width") -> peaks.final
+peaks.final$genic <- sapply(peaks.final$genic, sum)
+peaks.final$promoter <- sapply(peaks.final$promoter, sum)
+peaks.final$intergenic <- sapply(peaks.final$intergenic, sum)
+# peaks.final$motif <- sapply(peaks.final$motif, sum)
+
+all.df <- as.data.frame(all)[, -c(1:2)]
+names(all.df$name) <- NULL
+all.df$name <- unlist(all.df$name)
+
+write_csv(all.df, "04c_peak_composition/04c_ordered_peak_composition_consensus.csv")
+```
+
+NC_013967.1 2847757
+NC_013968.1 85092
+NC_013965.1 6359
+NC_013964.1 437906
+NC_013966.1 635786
+
+```{r}
+genome.size <- sum(2847757, 85092, 437906, 635786)
+sum.all.genes <- sum(IRanges::width(reduce(genes.only)))
+
+all.df %>%
+  filter(hit == "intergenic") %>%
+  tally(width) -> sum.ig.pks
+all.df %>%
+  filter(hit == "genic") %>%
+  tally(width) -> sum.gene.peaks
+all.df %>%
+  filter(hit == "promoter") %>%
+  tally(width) -> sum.pro.pks
+
+# get expected percentage of reads in genes based on gene density of genome
+out <- data.frame(
+  "no.peaks" = length(unique(all.df$score)),
+  "bp in peaks" = sum(all.df$width),
+  "expected in" = sum.all.genes / genome.size, # expected proportion of peaks in genes based on proportion of genes in genome
+  "expected out" = 1 - (sum.all.genes / genome.size),
+  "obs. in" = (sum.gene.peaks$n) / sum(all.df$width),
+  "obs. out" = (sum.pro.pks$n + sum.ig.pks$n) / sum(all.df$width)
+)
+out
+# expected 86.6% of bases in peaks to overlap genes, observed 52%
+# expected 13.3% of bases in peaks to overlap intergenic regions, observed 48%
+
+# binomial test, is the proportion of genic bps in peaks greater than we'd expect?
+binom.test(sum.gene.peaks$n, out$bp.in.peaks, out$expected.in, alternative = "greater") # no
+binom.test(sum.gene.peaks$n, out$bp.in.peaks, out$expected.in, alternative = "less") # its much less than we'd expect
+
+# binomial test, is the proportion of bps in peaks falling outside of gene sequences greater than we'd expect?
+binom.test(sum.ig.pks$n + sum.pro.pks$n, out$bp.in.peaks, out$expected.out, alternative = "greater") # yes
+```

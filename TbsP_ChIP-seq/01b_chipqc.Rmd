@@ -1,0 +1,50 @@
+---
+title: "HVO_trmB_chipQC"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+Load bioconductor libraries
+```{r, message=FALSE}
+#BiocManager::install(c("BiocParallel", "ChIPQC"))
+
+library(tidyverse)
+library(GenomicRanges)
+library(ChIPQC)
+library(BiocParallel)
+
+#package.version("BiocParallel")
+#package.version("ChIPQC")
+```
+
+###Creating a custom annotation track from .gff file
+```{r}
+txdb <- GenomicFeatures::makeTxDbFromGFF("00_genome_files/genomic.gff", format = "gff")
+
+# reduce(unique(unlist(GenomicFeatures::cdsBy(txdb, "tx"))))
+txn <- GenomicFeatures::transcripts(txdb)
+gene <- unlist(GenomicFeatures::cdsBy(txdb, "tx"))
+pro500 <- GenomicFeatures::promoters(txdb, upstream = 500, downstream = 0)
+pro250 <- GenomicFeatures::promoters(txdb, upstream = 250, downstream = 0)
+
+hvo <- list(
+  version = "",
+  gff.features = txn,
+  genes = gene,
+  promoters250 = pro250,
+  promoters500 = pro500
+)
+```
+
+###load sample file
+```{r}
+samples <- as.data.frame(read_csv("01b_ChIPQC/HVO_chipqc_meta_initial.csv"))
+```
+
+### create experiment!
+```{r, message=FALSE}
+register(SerialParam()) # prevents BiocParallel error
+exp <- ChIPQC(experiment = samples, annotation = hvo)
+ChIPQCreport(exp, reportFolder = "01b_ChIPQC/ChIPQC", reportName = "ChIPQC")
+QCmetrics(exp)
+```

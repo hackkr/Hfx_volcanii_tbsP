@@ -1,0 +1,157 @@
+---
+title: "Annontate motif locations"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+
+```{r, message=F, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(GenomicFeatures)
+library(janitor)
+```
+
+```{r, message=F, warning=FALSE}
+motifs <- read_tsv("05a_motif_discovery/fimo.tsv") %>%
+  head(., -3)
+gr <- makeGRangesFromDataFrame(motifs, seqnames.field = "sequence_name", keep.extra.columns = T)
+peaks <- rtracklayer::import("03_plot_peaks/ChIP_consensus.bed", format = "bed")
+
+peaks.anno <- read_xlsx("04a_peak_annotation/04a_genelists.xlsx", sheet = 2)
+peaks.anno <- makeGRangesFromDataFrame(peaks.anno, seqnames.field = "chr", start.field = "peak_start", end.field = "peak_end", keep.extra.columns = T)
+
+gff <- makeTxDbFromGFF("00_genome_files/genomic.gff", format = "gff", dataSource = "NCBI", organism = "Haloferax volcanii")
+gff.df <- read_csv("00_genome_files/genomic_gff_key.csv")
+hvo.cogs <- read.delim("00_genome_files/arcogs-14-18.hvo.txt", sep = "\t")
+```
+
+Get GRanges of genes and promoters and intergenic regions
+```{r}
+genes.only <- genes(gff, columns = c("GENEID"))
+
+# get promoter regions
+pro250 <- promoters(genes.only, upstream = 250, downstream = 0) ## Warning: this encroaches on nearby CDS
+pro250$type <- rep("promoter", length(pro250))
+
+# merge end of chr info with genes
+genes.only$type <- rep("gene", length(genes.only))
+
+# non coding regions of the genome
+IG <- gaps(reduce(genes.only, ignore.strand = T))
+```
+
+overlap promoter region and IG regions to get conservative promoter ranges (that respect genic regions)
+```{r}
+findOverlaps(pro250, IG) -> pros
+pintersect(pro250[queryHits(pros)], IG[subjectHits(pros)]) -> trimmed.pro
+trimmed.pro <- trimmed.pro[, 1:2]
+names(trimmed.pro) <- NULL
+```
+
+regenerate IG ranges to respect promoter regions
+```{r}
+ig.only <- gaps(reduce(c(genes.only, trimmed.pro), ignore.strand = T))
+```
+
+How many enriched regions have motifs in them??
+```{r}
+# how many motifs overlap?
+length(gr)
+length(reduce(gr, ignore.strand = F))
+
+# motifs that overlap with peaks
+length(subsetByOverlaps(gr, peaks))
+```
+
+look at motifs
+```{r, fig.width=8, fig.height=4}
+ggplot(motifs) +
+  geom_point(aes(y = -log10(`p-value`), x = start, color = sequence_name)) +
+  geom_hline(aes(yintercept = -log10(1e-5)), linetype = 2) +
+  scale_y_continuous(limits = c(2, 7)) +
+  scale_x_continuous(limits = c(1, 2846656)) +
+  labs(title = "Motif hits across genome") +
+  theme_classic()
+
+as.data.frame(subsetByOverlaps(gr, peaks)) %>%
+  ggplot() +
+  geom_point(aes(y = -log10(p.value), x = start, color = seqnames)) +
+  geom_hline(aes(yintercept = -log10(1e-5)), linetype = 2) +
+  scale_y_continuous(limits = c(2, 7)) +
+  scale_x_continuous(limits = c(1, 2846656)) +
+  labs(title = "Motifs in peaks") +
+  theme_classic()
+```
+
+```{r, message=F}
+# get peaks with motifs (no padding)
+lists <- findOverlaps(gr, peaks.anno, ignore.strand = T, minoverlap = 1)
+peak.with.motifs <- peaks.anno[subjectHits(lists)]
+peak.with.motifs$motif.pval <- gr[queryHits(lists)]$`p-value` # add motif score
+peak.with.motifs$type <- gr$motif_id[queryHits(lists)]
+peak.with.motifs$motif <- rep("motif", length(peak.with.motifs)) # create metacol with binary motif indicator
+peak.with.motifs$motif_start <- start(gr[queryHits(lists)])
+peak.with.motifs$motif_end <- end(gr[queryHits(lists)])
+peak.with.motifs
+
+# annotate the peaks that have motifs (again)
+write_csv(as.data.frame(peak.with.motifs), "05b_motif_annotation/05b_peak_motif.csv")
+```
+
+#Annotate FIMO results: "where are the motif hits across the genome?"
+1. identify and annotate all motifs that are in intergenic/promoter regions (use p-value/score cutoff)                 
+    max(peak.with.motif$motif.score, na.rm = T)
+3. look for pairs/groups of motifs that overlap -> there are 3, and included in the results file for all fimo hits
+```{r}
+GenomicRanges::findOverlaps(genes.only, gr, ignore.strand = T, minoverlap = 5) -> genes
+GenomicRanges::findOverlaps(trimmed.pro, gr, ignore.strand = T, minoverlap = 5) -> promoters
+GenomicRanges::findOverlaps(ig.only, gr, ignore.strand = T, minoverlap = 5) -> ig.regions
+
+# get IRanges from hits objects and add informative metadata
+genelist <- gr[subjectHits(genes)][, -3]
+genelist$type <- rep("gene", length(genes))
+strand(genelist) <- strand(genes.only[queryHits(genes)])
+genelist$feature_start <- start(genes.only[queryHits(genes)])
+genelist$feature_end <- end(genes.only[queryHits(genes)])
+genelist$TXNAME <- as.character(genes.only$GENEID[queryHits(genes)])
+
+prolist <- gr[subjectHits(promoters)][, -3]
+prolist$type <- rep("promoter", length(promoters))
+prolist$feature_start <- start(trimmed.pro[queryHits(promoters)])
+prolist$feature_end <- end(trimmed.pro[queryHits(promoters)])
+strand(prolist) <- strand(trimmed.pro[queryHits(promoters)])
+prolist$TXNAME <- as.character(trimmed.pro$GENEID[queryHits(promoters)])
+
+iglist <- gr[subjectHits(ig.regions)][, -3]
+iglist$type <- rep("intergenic", length(ig.regions))
+iglist$feature_start <- start(ig.only[queryHits(ig.regions)])
+iglist$feature_end <- end(ig.only[queryHits(ig.regions)])
+iglist$TXNAME <- NA
+
+# convert separate IRanges to Data frames
+seqs <- seq(1, length(genes))
+as.data.frame(prolist) -> one
+rownames(one) <- NULL
+as.data.frame(genelist, row.names(seqs)) -> two
+rownames(two) <- NULL
+as.data.frame(iglist, row.names(seqs)) -> three
+rownames(three) <- NULL
+
+# combine dfs (gene hits and promoter hits)
+final <- rbind(one, two, three) %>% distinct(.keep_all = T)
+colnames(final)[c(2, 3, 14)] <- c("motif_start", "motif_end", "locus_tag")
+
+# merge with gff information (get NCBI annotations and locus names)
+gff.df[gff.df$locus_tag %in% final$locus_tag, ] -> tmp
+tmp[c(2, 3, 4, 10)] -> tmp2
+(left_join(final, tmp2, by = "locus_tag") %>% arrange(p.value) -> final)
+
+# check that all are accounted for:
+nrow(final) == nrow(one) + nrow(two) + nrow(three)
+
+# now do p-value cutoff
+final %>% filter(p.value <= max(peak.with.motifs$motif.pval, na.rm = T)) -> final
+
+write_csv(final, "05b_motif_annotation/05b_XTREME_motifs_wg_annotated.csv")
+```

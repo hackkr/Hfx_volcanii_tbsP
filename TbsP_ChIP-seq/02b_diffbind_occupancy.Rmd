@@ -1,0 +1,188 @@
+---
+title: "Binding TbsP"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+```{r, message=FALSE}
+# if using windows and getting an rJava error when intalling xlsx package, need to make sure that your java matchs r installations (32 or 64-bit) #Sys.setenv(JAVA_HOME="C:\\Program Files/Java/jre1.8.0_241/")
+# library(rJava)
+
+library(tidyverse)
+library(openxlsx)
+library(rtracklayer)
+library(DiffBind)
+
+package.version("DiffBind")
+```
+
+fragment sizes calculated by CHIPQC
+IP_tbsPHA_1	213
+IP_tbsPHA_2	236
+IP_tbsPHA_3	214
+IP_tbsPHA_4	233
+IP_tbsPHA_glc_1	243
+IP_tbsPHA_glc_2	231
+IP_tbsPHA_glc_3	221
+IP_tbsPHA_glc_4	223
+IP_WT_glc_2	201
+
+```{r, message=F}
+(meta <- read_csv("01b_ChIPQC/HVO_chipqc_meta_initial.csv")[c(2:9), ])
+
+config <- list(minQCth = 30, fragmentSize = c(243, 231, 221, 223, 213, 236, 214, 233), bCorPlot = T, th = 0.05)
+
+grey <- import.bed("01a_mosaics/peaks/HVO_WT_glc_2.bed")
+```
+
+Create initial DBA object
+```{r, message=F, warning=FALSE, fig.height=6, fig.width=6}
+tbsP <- dba(sampleSheet = meta, peakFormat = "bed", minOverlap = 0.75, config = config)
+
+# Mask peaks identified in WT control samples
+tbsP2 <- dba.blacklist(tbsP, blacklist = FALSE, greylist = grey)
+```
+
+```{r, fig.height=6, fig.width=6}
+plot(dba.overlap(tbsP, mode = DBA_OLAP_RATE), type = "b", ylab = "# peaks", xlab = "Overlap at least this many peaksets")
+
+# number of overlapping peaks in samples
+dba.overlap(tbsP, mode = DBA_OLAP_RATE)
+dba.plotVenn(tbsP, tbsP$masks$`no glucose`)
+dba.plotVenn(tbsP, tbsP$masks$`0.1% glucose`)
+
+# consensus peaksets
+tbsP_consensus <- dba.peakset(tbsP, consensus = DBA_CONDITION, minOverlap = 0.75)
+
+dba.plotPCA(tbsP_consensus, DBA_CONDITION, label = DBA_ID)
+
+
+dba.plotVenn(tbsP_consensus, tbsP_consensus$masks$Consensus) # 32 regions in no_glu (onlyA)
+
+(tbsP_consensus.OL <- dba.overlap(tbsP_consensus, tbsP_consensus$masks$Consensus))
+
+# get the combined gRanges:
+dba.peakset(tbsP_consensus, bRetrieve = T)
+```
+This doesn't have any peak information since it is solely looking at overlaps. In order to trim and recalculate consensus peaks, need to do a hybrid approach.
+
+##tbsP no_glu
+```{r}
+meta %>% filter(Condition == "no glucose") -> meta.noglu
+config <- list(
+  minQCth = 30, fragmentSize = c(213, 236, 214, 233),
+  bCorPlot = T, th = 0.05
+)
+tbsP.noglu <- dba(sampleSheet = meta.noglu, peakFormat = "bed", minOverlap = 0.75, config = config)
+tbsP.noglu <- dba.blacklist(tbsP.noglu, blacklist = FALSE, greylist = grey)
+count.noglu <- dba.count(tbsP.noglu, summits = 150, minOverlap = 0.75, score = DBA_SCORE_RPKM_MINUS) # 42 peaks across 4 samples
+count.noglu <- dba.normalize(count.noglu, normalize = DBA_NORM_RLE, library = DBA_LIBSIZE_FULL)
+as.data.frame(peak.noglu <- dba.peakset(count.noglu, bRetrieve = T))
+dba.plotVenn(tbsP.noglu, tbsP.noglu$masks$`no glucose`)
+```
+
+##tbsP glu
+```{r}
+meta %>% filter(Condition == "0.1% glucose") -> meta.glu
+config <- list(
+  minQCth = 30, fragmentSize = c(243, 231, 221, 223),
+  bCorPlot = T, th = 0.05
+)
+tbsP.glu <- dba(sampleSheet = meta.glu, peakFormat = "bed", minOverlap = 0.75, config = config)
+tbsP.glu <- dba.blacklist(tbsP.glu, blacklist = FALSE, greylist = grey)
+count.glu <- dba.count(tbsP.glu, summits = 150, minOverlap = 0.75, score = DBA_SCORE_RPKM_MINUS) # returned 45 peaks across 4 samples
+count.glu <- dba.normalize(count.glu, normalize = DBA_NORM_RLE, library = DBA_LIBSIZE_FULL)
+count.glu$peaks
+as.data.frame(peak.glu <- dba.peakset(count.glu, bRetrieve = T))
+dba.plotVenn(tbsP.glu, tbsP.glu$masks$`0.1% glucose`)
+```
+
+##shared peaks calculated by ignoring condition differences:
+```{r}
+tbsP <- dba(sampleSheet = meta, peakFormat = "bed", minOverlap = 0.75, config = config)
+tbsP <- dba.blacklist(tbsP, blacklist = FALSE, greylist = grey)
+counted <- dba.count(tbsP, summits = 150, minOverlap = 0.75, score = DBA_SCORE_RPKM_MINUS) # returned 45 peaks across 4 samples
+count.shared <- dba.normalize(counted, normalize = DBA_NORM_RLE, library = DBA_LIBSIZE_FULL)
+count.shared$peaks
+as.data.frame(shared <- dba.peakset(count.shared, bRetrieve = T))
+shared$score <- rowMeans(as.data.frame(mcols(shared)))
+
+dba.plotVenn(tbsP, tbsP$masks$Replicate.1)
+dba.plotVenn(tbsP, tbsP$masks$Replicate.2)
+dba.plotVenn(tbsP, tbsP$masks$Replicate.3)
+dba.plotVenn(tbsP, tbsP$masks$Replicate.4)
+```
+
+Now, remove peaks in "unique" lists that overlap with the shared list.
+```{r}
+# unique no_glu
+peak.noglu.unique <- peak.noglu[-queryHits(findOverlaps(peak.noglu, shared, type = "any", minoverlap = 100)), ]
+peak.noglu.unique$score <- rowMeans(as.data.frame(mcols(peak.noglu.unique)))
+peak.noglu.unique <- sort(peak.noglu.unique, by = ~score, decreasing = T)
+names(peak.noglu.unique) <- seq(length(peak.noglu.unique))
+peak.noglu.unique <- sort(peak.noglu.unique)
+as.data.frame(peak.noglu.unique)
+
+# unique glu
+peak.glu.unique <- peak.glu[-queryHits(findOverlaps(peak.glu, shared, type = "any", minoverlap = 100)), ]
+peak.glu.unique$score <- rowMeans(as.data.frame(mcols(peak.glu.unique)))
+peak.nlu.unique <- sort(peak.glu.unique, by = ~score, decreasing = T)
+names(peak.glu.unique) <- seq(length(peak.glu.unique))
+peak.glu.unique <- sort(peak.glu.unique)
+as.data.frame(peak.glu.unique)
+
+# shared
+shared <- sort(shared, by = ~score, decreasing = T)
+names(shared) <- seq(length(shared))
+shared <- sort(shared)
+as.data.frame(shared)
+
+# prepare for exporting (bed)
+export.bed(peak.glu.unique, "02_DiffBind/glucose_peaks.bed") # includes score
+export.bed(peak.noglu.unique, "02_DiffBind/noglucose_peaks.bed") # includes score
+export.bed(shared, "02_DiffBind/tbsP_shared_peaks.bed") # includes score
+```
+
+Compare with affinity analysis
+```{r}
+DB <- import.bed("02_DiffBind/02_diffbind_RLE.bed")
+DB <- DB[, 2]
+
+peak.noglu.unique[queryHits(findOverlaps(peak.noglu.unique, DB, type = "any", minoverlap = 100)), ]
+peak.glu.unique[queryHits(findOverlaps(peak.glu.unique, DB, type = "any", minoverlap = 100)), ]
+
+shared[queryHits(findOverlaps(shared, DB, type = "any", minoverlap = 100)), ] # all 11 of DB calls are in the shared dataset
+DB[queryHits(findOverlaps(DB, shared, type = "any", minoverlap = 100)), ]
+```
+all 11 of DB peaks are in the shared peak set. Since none of the peaks are greatly differentially bound (max 0.4 LFC), I am not concerned with wrangling the data to include the LFC for those peaks in the same sheet.
+
+Add analysis type metadata
+```{r}
+peak.noglu.unique$analysis <- "occupancy"
+peak.glu.unique$analysis <- "occupancy"
+shared$analysis <- "occupancy"
+grey$analysis <- "GreyListChIP"
+DB$analysis <- "affinity"
+```
+
+Compile Supplemental file:
+```{r}
+variables <- GRangesList(
+  "tbsP_shared" = shared, "tbsP_DiffBind" = DB,
+  "no_glu_unique" = peak.noglu.unique, "glu_unique" = peak.glu.unique,
+  "WT_greylist" = grey
+)
+wb <- createWorkbook()
+
+for (i in 1:length(variables)) {
+  # create dataframe
+  df <- as.data.frame(variables[i]) %>% discard(~ all(is.na(.)))
+  df <- df[-1]
+
+  # write to excel file, storing results for each .bed as a different sheet
+  addWorksheet(wb, names(variables)[i], gridLines = TRUE) # Add a worksheet
+  writeData(wb, sheet = i, df, rowNames = FALSE) # write data to worksheet number i
+}
+
+saveWorkbook(wb, "02_DiffBind/02_peaklists.xlsx", overwrite = TRUE)
+```

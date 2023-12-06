@@ -1,0 +1,120 @@
+---
+title: "DiffBind TbsP"
+author: "Rylee Hackley"
+project: "HVO trmB and tbsP"
+output: github_document
+---
+```{r, message=FALSE}
+# if using windows and getting an rJava error when intalling xlsx package, need to make sure that your java matches r installations (32 or 64-bit) #Sys.setenv(JAVA_HOME="C:\\Program Files/Java/jre1.8.0_241/")
+# library(rJava)
+# BiocManager::install(c("DiffBind", "edgeR"))
+library(tidyverse)
+library(openxlsx)
+library(rtracklayer)
+library(DiffBind)
+
+package.version("DiffBind")
+```
+
+fragment sizes calculated by CHIPQC. using initial peaks called with default settings, since PCA had better replicate agreement and %RIP was higher
+IP_tbsPHA_1	213
+IP_tbsPHA_2	236
+IP_tbsPHA_3	214
+IP_tbsPHA_4	233
+IP_tbsPHA_glc_1	243 (very low RIP, might remove as outlier)
+IP_tbsPHA_glc_2	231
+IP_tbsPHA_glc_3	221
+IP_tbsPHA_glc_4	223
+IP_WT_glc_2	201
+
+```{r, message=F}
+# load all samples
+meta <- read_csv("01b_ChIPQC/HVO_chipqc_meta_initial.csv")[c(2:9),]
+config <- list(minQCth = 30, fragmentSize = c(243, 231, 221, 223, 213, 236, 214, 233), bCorPlot = T, th = 0.05)
+
+grey <- import.bed("01a_mosaics/peaks/HVO_WT_glc_2.bed")
+```
+
+Create initial DBA object
+```{r, message=F, fig.height=6, fig.width=6}
+tbsP <- dba(sampleSheet = meta, peakFormat = "bed", minOverlap = 0.75, config = config)
+tbsP
+```
+
+```{r, fig.height=6, fig.width=6}
+plot(tbsP)
+
+# number of overlapping peaks in samples
+dba.overlap(tbsP, mode = DBA_OLAP_RATE)
+dba.overlap(tbsP, tbsP$masks$`0.1% glucose`, mode = DBA_OLAP_RATE)
+dba.overlap(tbsP, tbsP$masks$`no glucose`, mode = DBA_OLAP_RATE)
+```
+
+Mask peaks identified in WT control samples
+```{r, fig.height=6, fig.width=6}
+tbsP <- dba.blacklist(tbsP, blacklist = FALSE, greylist = grey)
+dba.overlap(tbsP, mode = DBA_OLAP_RATE)
+dba.overlap(tbsP, tbsP$masks$`0.1% glucose`, mode = DBA_OLAP_RATE)
+dba.overlap(tbsP, tbsP$masks$`no glucose`, mode = DBA_OLAP_RATE)
+```
+
+```{r}
+tbsP <- dba.count(tbsP, summits = 150, minOverlap = 0.75) # DBA_SCORE_SUMMIT_ADJ: summit height (maximum read pileup value), normalized to relative library size
+tbsP
+```
+
+compare normalization:
+```{r}
+tbsP2 <- dba.normalize(tbsP, normalize = DBA_NORM_LIB)
+tbsP2 <- dba.contrast(tbsP2, reorderMeta = list(Condition = "0.1% glucose"), minMembers = 3)
+tbsP2 <- dba.analyze(tbsP2)
+dba.plotMA(tbsP2, method = DBA_DESEQ2)
+
+tbsP4 <- dba.normalize(tbsP, normalize = DBA_NORM_LIB, library = DBA_LIBSIZE_PEAKREADS)
+tbsP4 <- dba.contrast(tbsP4, reorderMeta = list(Condition = "0.1% glucose"), minMembers = 3)
+tbsP4 <- dba.analyze(tbsP4)
+dba.plotMA(tbsP4, method = DBA_DESEQ2)
+
+tbsP3 <- dba.normalize(tbsP, normalize = DBA_NORM_RLE, library = DBA_LIBSIZE_PEAKREADS)
+tbsP3 <- dba.contrast(tbsP3, reorderMeta = list(Condition = "0.1% glucose"), minMembers = 3)
+tbsP3 <- dba.analyze(tbsP3)
+dba.plotMA(tbsP3, method = DBA_DESEQ2)
+```
+DBA norm RLE is the only normalization that results in correct clustering: 12 DB peaks.
+
+normalize, set up contrasts, and execute differential binding analysis
+```{r}
+tbsP <- dba.normalize(tbsP, normalize = DBA_NORM_LIB, library = DBA_LIBSIZE_FULL)
+tbsP <- dba.contrast(tbsP, reorderMeta = list(Condition = "0.1% glucose"), minMembers = 3)
+tbsP <- dba.analyze(tbsP)
+
+dba.plotMA(tbsP, method = DBA_DESEQ2)
+dba.show(tbsP, bContrasts = TRUE)
+```
+
+Visualize DBA results
+```{r}
+dba.plotHeatmap(tbsP3, contrast = 1)
+
+# PCA for all sites in affinity matrix
+dba.plotPCA(tbsP3, DBA_CONDITION, label = DBA_CONDITION)
+
+# PCA plot using affinity data for only differential bound sites
+dba.plotPCA(tbsP3, contrast = 1, label = DBA_CONDITION)
+
+# Binding affinity heatmap showing affinities for differentially bound sites
+hmap <- colorRampPalette(c("red", "black", "green"))(n = 13)
+dba.plotHeatmap(tbsP3,
+  contrast = 1,
+  correlations = FALSE, scale = "row", colScheme = hmap
+)
+```
+
+view report, compile score, and export
+```{r}
+(tbsP.DB <- dba.report(tbsP3, bFlip = T, bCalled = T, bCounts = T, bNormalized = F))
+tbsP.DB$score <- tbsP.DB$Fold
+
+export.bed(tbsP.DB, "02_DiffBind/02_diffbind_RLE.bed")
+write_csv(as.data.frame(tbsP.DB), "02_DiffBind/02_diffbind_RLE.csv")
+```
