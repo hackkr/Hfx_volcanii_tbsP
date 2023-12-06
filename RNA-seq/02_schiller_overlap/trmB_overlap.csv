@@ -1,0 +1,29 @@
+locus_tag,old_locus_tag,model,analysis_type.x,analysis_type.y,analysis_type,uniprot,annotation
+HVO_RS05875,HVO_0240,TrmB interaction,NA,NA,clusters_14,D4GZI5,Lrp/AsnC family transcription regulator
+HVO_RS05875,HVO_0240,TrmB interaction,NA,NA,clusters_12,D4GZI5,Lrp/AsnC family transcription regulator
+HVO_RS06270,HVO_0326,TrmB interaction,NA,NA,clusters_12,D4GZV5,"(ribK) riboflavin kinase, CTP-dependent"
+HVO_RS06310,HVO_0334,TrmB interaction,NA,rdfA_ddfA,NA,D4GZW3,"(apt2) purine phosphoribosyltransferase (adenine phosphoribosyltransferase, xanthine-guanine phosphoribosyltransferase)"
+HVO_RS06430,HVO_0358,TrmB interaction,NA,NA,clusters_14,D4GZY5,(hom1) homoserine dehydrogenase
+HVO_RS08595,HVO_0812,TrmB interaction,NA,NA,clusters_14,D4GUD0,(ppsA) phosphoenolpyruvate synthase
+HVO_RS09725,HVO_1048,TrmB interaction,JK3_cetZ1,NA,NA,D4GVM4,(purL) phosphoribosylformylglycinamidine synthase subunit PurL
+HVO_RS09905,HVO_1084,TrmB interaction,JK3_cetZ1,NA,NA,D4GVT3,(purB) adenylosuccinate lyase
+HVO_RS09910,HVO_1085,TrmB interaction,JK3_cetZ1,NA,NA,D4GVT4,(purNH) phosphoribosylglycinamide formyltransferase / phosphoribosylaminoimidazolecarboxamide formyltransferase
+HVO_RS10145,HVO_1133,TrmB interaction,NA,rdfA_ddfA,NA,D4GW85,HTH domain protein
+HVO_RS10820,HVO_1273,TrmB interaction,JK3_cetZ1,NA,NA,D4GX92,(guaB1) inosine-5'-monophosphate dehydrogenase
+HVO_RS11885,HVO_1488,TrmB interaction,JK3_cetZ1,rdfA_ddfA,NA,D4GYD4,(gnaD) D-gluconate dehydratase
+HVO_RS14445,HVO_2027,TrmB interaction,NA,NA,clusters_14,D4GU40,DoxX domain protein
+HVO_RS14465,HVO_2031,TrmB interaction,NA,rdfA_ddfA,NA,D4GU44,(tsgA12) ABC-type transport system periplasmic substrate-binding protein (probable substrate sugar)
+HVO_RS14740,HVO_2088,TrmB interaction,NA,rdfA_ddfA,clusters_11,D4GUN6,glycoside hydrolase domain protein
+HVO_RS15250,HVO_2193,TrmB interaction,JK3_cetZ1,NA,NA,D4GVC6,(purC) phosphoribosylaminoimidazole-succinocarboxamide synthase
+HVO_RS18555,HVO_2865,TrmB interaction,JK3_cetZ1,NA,NA,D4GXG9,(folD) methylenetetrahydrofolate dehydrogenase / methenyltetrahydrofolate cyclohydrolase
+HVO_RS19125,HVO_2981,TrmB interaction,NA,rdfA_ddfA,NA,D4GY62,(upp) uracil phosphoribosyltransferase
+HVO_RS19590,HVO_C0076,TrmB interaction,NA,NA,clusters_14,D4H0F8,IclR family transcription regulator
+HVO_RS00850,HVO_B0173,TrmB interaction,NA,NA,clusters_14,D4GPH4,(sph4) Smc-like protein Sph4
+HVO_RS01000,HVO_B0203,TrmB interaction,NA,NA,clusters_14,D4GPK4,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_RS01280,HVO_B0263,TrmB interaction,NA,NA,clusters_14,D4GPR0,M20 family amidohydrolase (homolog to indole-3-acetyl-aspartate hydrolase)
+HVO_RS02275,HVO_A0088,TrmB interaction,NA,NA,clusters_14,D4GQC0,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_RS02275,HVO_A0088,TrmB interaction,NA,NA,clusters_11,D4GQC0,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_RS03090,HVO_A0280,TrmB interaction,NA,NA,clusters_12,D4GQV7,IclR family transcription regulator
+HVO_RS03165,HVO_A0295,TrmB interaction,NA,NA,clusters_12,D4GQX2,(amaB2) amidase (hydantoinase/carbamoylase family)
+HVO_RS03375,HVO_A0339,TrmB interaction,NA,NA,clusters_14,D4GR16,(dppA7) ABC-type transport system periplasmic substrate-binding protein (probable substrate dipeptide/oligopeptide)
+HVO_RS04245,HVO_A0537,TrmB interaction,NA,NA,clusters_11,D4GRJ9,(hyuA1) N-methylhydantoinase (ATP-hydrolyzing) A

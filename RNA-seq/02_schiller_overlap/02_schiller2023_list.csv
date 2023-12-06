@@ -1,0 +1,436 @@
+old_locus_tag,analysis_type.x,analysis_type.y,analysis_type,uniprot,annotation
+HVO_0009,JK3_cetZ1,NA,NA,D4GYK5,(tnaA) tryptophanase
+HVO_0016,NA,NA,clusters_12,D4GYL1,conserved hypothetical protein
+HVO_0017,NA,NA,clusters_14,D4GYL2,conserved hypothetical protein
+HVO_0020,NA,NA,clusters_14,D4GYL5,(thiQ) ABC-type transport system ATP-binding protein (probable substrate thiamine)
+HVO_0021,NA,NA,clusters_11,D4GYL6,(thiP) ABC-type transport system permease protein (probable substrate thiamine)
+HVO_0029,NA,NA,clusters_14,D4GYM4,(uvrB) UvrABC system protein B
+HVO_0037,NA,NA,clusters_12,D4GYN2,phosphodiesterase domain protein
+HVO_0073,NA,NA,clusters_12,D4GYR9,(recJ1) single-stranded-DNA-specific exonuclease RecJ1
+HVO_0083,NA,NA,clusters_14,D4GYS8,GlnK-type ammonia transport regulator
+HVO_0085,NA,NA,clusters_14,D4GYT0,GlnK-type ammonia transport regulator
+HVO_0099,NA,NA,clusters_14,D4GYU4,helicase domain protein
+HVO_0124,NA,NA,clusters_14,D4GYX0,MgtE family transport protein
+HVO_0159,NA,NA,clusters_14,D4GZA3,conserved hypothetical protein
+HVO_0176,NA,NA,clusters_11,D4GZC1,(cat1) transport protein (probable substrate cationic amino acids)
+HVO_0177,NA,NA,clusters_14,D4GZC0,(arsC) arsenate reductase (glutaredoxin)
+HVO_0191,NA,NA,clusters_14,D4GZD5,(mutS5a) DNA mismatch repair protein MutS
+HVO_0194,NA,NA,clusters_14,D4GZD8,(orc9) Orc1-type DNA replication protein
+HVO_0203,NA,NA,clusters_14,D4GZE8,(rfcA) replication factor C small subunit
+HVO_0208,NA,NA,clusters_14,D4GZF3,(guaAa2) glutamine amidotransferase (homolog to GMP synthase subunit A)
+HVO_0214,NA,NA,clusters_14,D4GZF9,L-lactate dehydrogenase
+HVO_0219,NA,NA,clusters_12,D4GZG4,(cmi4) conditioned medium-induced protein 4
+HVO_0234,NA,NA,clusters_12,D4GZH9,conserved hypothetical protein
+HVO_0237,NA,NA,clusters_11,D4GZI2,UPF0761 family protein
+HVO_0240,NA,NA,clusters_14,D4GZI5,Lrp/AsnC family transcription regulator
+HVO_0240,NA,NA,clusters_12,D4GZI5,Lrp/AsnC family transcription regulator
+HVO_0243,NA,NA,clusters_14,D4GZI8,(ltaE) threonine aldolase
+HVO_0250,NA,NA,clusters_11,D4GZJ5,DUF21/CBS domain protein
+HVO_0283,NA,NA,clusters_12,D4GZR3,(ashA) archaea-specific helicase AshA
+HVO_0290,NA,NA,clusters_11,D4GZR9,CopG domain protein
+HVO_0301,NA,NA,clusters_11,D4GZT0,receiver/sensor box histidine kinase
+HVO_0303,NA,NA,clusters_14,D4GZT2,(idsA2) bifunctional short chain isoprenyl diphosphate synthase
+HVO_0309,NA,NA,clusters_11,D4GZT8,(menG) probable demethylmenaquinone methyltransferase
+HVO_0310,NA,NA,clusters_11,D4GZT9,(atpH) A-type ATP synthase subunit H
+HVO_0326,NA,NA,clusters_12,D4GZV5,"(ribK) riboflavin kinase, CTP-dependent"
+HVO_0329,NA,NA,clusters_14,D4GZV8,(ilvE) branched-chain amino acid aminotransferase
+HVO_0334,NA,rdfA_ddfA,NA,D4GZW3,"(apt2) purine phosphoribosyltransferase (adenine phosphoribosyltransferase, xanthine-guanine phosphoribosyltransferase)"
+HVO_0346,NA,rdfA_ddfA,NA,D4GZX3,(rpoH) DNA-directed RNA polymerase subunit H
+HVO_0358,NA,NA,clusters_14,D4GZY5,(hom1) homoserine dehydrogenase
+HVO_0388,NA,NA,clusters_14,D4H014,(rnr) ribonuclease R
+HVO_0401,NA,rdfA_ddfA,NA,D4H027,UspA domain protein
+HVO_0407,NA,NA,clusters_11,D4GRU8,conserved hypothetical protein
+HVO_0409,NA,rdfA_ddfA,NA,D4GRV0,(ribE) riboflavin synthase
+HVO_0420,NA,rdfA_ddfA,clusters_12,D4GRW1,(mpcT) transducer protein MpcT
+HVO_0421,NA,NA,clusters_14,D4GRW2,arNOG04375 family protein (homolog to PilT-type ATPase)
+HVO_0423,NA,NA,clusters_11,D4GRW4,conserved hypothetical protein
+HVO_0431,NA,NA,clusters_12,D4GRX2,HAD superfamily hydrolase
+HVO_0445,NA,NA,clusters_14,D4GRY6,(phnE1) ABC-type transport system permease protein (probable substrate phosphate/phosphonate)
+HVO_0446,NA,NA,clusters_11,D4GRY7,(phnC1) ABC-type transport system ATP-binding protein (probable substrate phosphate/phosphonate)
+HVO_0449,NA,NA,clusters_14,D4GRZ0,(pheA) prephenate dehydratase
+HVO_0455,NA,NA,clusters_11,O30560,(ths2) thermosome subunit 2
+HVO_0492,NA,NA,clusters_14,D4GS32,(boa1) HTH-10 family transcription regulator
+HVO_0547,NA,NA,clusters_14,D4GSE4,conserved hypothetical protein
+HVO_0549,NA,NA,clusters_11,D4GSE6,(kdgK1) 2-keto-3-deoxygluconate kinase / 2-keto-3-deoxygalactonate kinase
+HVO_0554,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GSF1,(basT) transducer protein BasT
+HVO_0555,JK3_cetZ1,NA,clusters_12,D4GSF2,(htr15a) transducer protein Htr15
+HVO_0569,NA,NA,clusters_11,D4GSG4,(rio2) RIO-type serine/threonine protein kinase Rio2
+HVO_0574,NA,NA,clusters_11,D4GSG9,probable S-adenosylmethionine-dependent methyltransferase
+HVO_0575,NA,NA,clusters_11,D4GSH1,homolog to NAD-dependent epimerase/dehydratase
+HVO_0581,JK3_cetZ1,NA,NA,D4GSH7,"(ftsZ2) cell division protein FtsZ, type II"
+HVO_0601,NA,NA,clusters_14,D4GSJ6,(hom2) homoserine dehydrogenase
+HVO_0616,NA,NA,clusters_12,D4GSL2,conserved hypothetical protein
+HVO_0619,NA,NA,clusters_12,D4GSL5,(pilC1) type IV pilus biogenesis complex membrane subunit
+HVO_0620,NA,NA,clusters_12,D4GSL6,(pilB1) type IV pilus biogenesis complex ATPase subunit
+HVO_0655,NA,NA,clusters_14,D4GSR5,GalE family epimerase/dehydratase
+HVO_0656,NA,NA,clusters_11,D4GSR6,DUF2103 family protein
+HVO_0658,NA,NA,clusters_11,D4GSR8,(truD) tRNA pseudouridine(13) synthase TruD
+HVO_0670,NA,NA,clusters_14,D4GT00,YqjG-type gamma-glutamylcysteinyl-hydroquinone reductase
+HVO_0682,NA,NA,clusters_12,D4GT18,(mrr) probable Mrr family endonuclease
+HVO_0687,NA,NA,clusters_14,D4GT26,M20 family amidohydrolase
+HVO_0702,NA,NA,clusters_14,D4GT53,DUF2298 family protein
+HVO_0705,NA,NA,clusters_14,D4GT56,GtrA family protein
+HVO_0714,NA,NA,clusters_12,D4GT70,homolog to sodium/calcium antiporter
+HVO_0721,NA,NA,clusters_11,D4GT85,PHP domain protein
+HVO_0725,NA,NA,clusters_11,D4GT91,probable oxidoreductase (short-chain dehydrogenase family)
+HVO_0743,NA,NA,clusters_12,D4GTB7,probable phosphodiesterase
+HVO_0757,NA,rdfA_ddfA,NA,D4GTP9,probable oxidoreductase (aldo-keto reductase family protein)
+HVO_0758,NA,rdfA_ddfA,clusters_12,D4GTQ1,small CPxCG-related zinc finger protein
+HVO_0760,NA,NA,clusters_14,D4GTQ4,"probable glycosyltransferase, type 2"
+HVO_0778,JK3_cetZ1,NA,NA,Q9HHA2,(ths3) thermosome subunit 3
+HVO_0790,JK3_cetZ1,NA,NA,D4GU21,"(fba2) 2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase"
+HVO_0810,NA,NA,clusters_12,D4GUC4,conserved hypothetical protein
+HVO_0812,NA,NA,clusters_14,D4GUD0,(ppsA) phosphoenolpyruvate synthase
+HVO_0825,NA,NA,clusters_11,D4GUF5,(hcpA) halocyanin
+HVO_0831,NA,NA,clusters_11,D4GUG7,(ygfD) YgfD family GTPase
+HVO_0835,NA,NA,clusters_11,D4GUH4,(acaB1) acetyl-CoA C-acetyltransferase
+HVO_0837,NA,NA,clusters_11,D4GUH6,(nadK2) probable NAD kinase (polyphosphate/ATP)
+HVO_0838,NA,NA,clusters_11,D4GUH7,conserved hypothetical protein
+HVO_0842,NA,NA,clusters_14,D4GUI3,(petB) cytochrome bc1 complex cytochrome b subunit
+HVO_0844,NA,NA,clusters_11,D4GUI7,(hcpB) halocyanin
+HVO_0845,NA,NA,clusters_11,D4GUI8,conserved hypothetical protein
+HVO_0858,NA,NA,clusters_12,D4GUK5,(polB1) DNA-directed DNA polymerase B (intein-containing)
+HVO_0866,NA,NA,clusters_14,D4GUL3,homolog to alanine-tRNA ligase
+HVO_0894,NA,rdfA_ddfA,NA,D4GUW1,(acs1) acyl-CoA synthetase
+HVO_0911,NA,NA,clusters_11,D4GUZ0,(drg) GTP-binding protein Drg
+HVO_0938,NA,NA,clusters_11,D4GV26,UspA domain protein
+HVO_0945,NA,NA,clusters_14,D4GV41,(cbaA) ba3-type terminal oxidase subunit I
+HVO_0954,NA,NA,clusters_12,D4GV61,DUF304 domain protein
+HVO_0975,NA,NA,clusters_14,D4GVF2,TIGR03663 family protein
+HVO_0982,NA,NA,clusters_11,D4GVF9,(nuoI) NADH dehydrogenase-like complex subunit I
+HVO_0992,NA,NA,clusters_11,D4GVG9,conserved hypothetical protein
+HVO_0999,NA,NA,clusters_14,D4GVH6,DRTGG domain protein
+HVO_1033,NA,NA,clusters_14,D4GVK9,(pilC3) type IV pilus biogenesis complex membrane subunit
+HVO_1034,NA,NA,clusters_14,D4GVL0,(pilB3) type IV pilus biogenesis complex ATPase subunit
+HVO_1048,JK3_cetZ1,NA,NA,D4GVM4,(purL) phosphoribosylformylglycinamidine synthase subunit PurL
+HVO_1055,NA,NA,clusters_12,D4GVN2,(trkA1) TrkA domain protein
+HVO_1058,NA,NA,clusters_14,D4GVN7,(trkA2) TrkA domain protein
+HVO_1061,NA,NA,clusters_11,D4GVP3,(trxB2) oxidoreductase (homolog to thioredoxin-disulfide reductase)
+HVO_1071,NA,NA,clusters_12,D4GVR0,conserved hypothetical protein
+HVO_1079,JK3_cetZ1,NA,clusters_11,D4GVS4,homolog to sulfate adenylyltransferase small subunit
+HVO_1084,JK3_cetZ1,NA,NA,D4GVT3,(purB) adenylosuccinate lyase
+HVO_1085,JK3_cetZ1,NA,NA,D4GVT4,(purNH) phosphoribosylglycinamide formyltransferase / phosphoribosylaminoimidazolecarboxamide formyltransferase
+HVO_1088,NA,NA,clusters_14,D4GW05,"(folCP) folylpolyglutamate synthase / 7,8-dihydropteroate reductase / dihydropteroate synthase"
+HVO_1090,NA,NA,clusters_14,D4GW09,(tfeB) transcription initiation factor TFE beta subunit
+HVO_1091,NA,NA,clusters_11,Q9V2V6,(psmA1) proteasome alpha subunit
+HVO_1095,NA,NA,clusters_14,D4GW17,probable secreted glycoprotein
+HVO_1099,NA,NA,clusters_14,D4GW24,"(dapD) 2,3,4,5-tetrahydropyridine-2,6-dicarboxylate N-succinyltransferase"
+HVO_1100,NA,NA,clusters_14,D4GW26,(dapB) 4-hydroxy-tetrahydrodipicolinate reductase
+HVO_1102,NA,NA,clusters_14,D4GW30,DUF88 family protein
+HVO_1113,NA,NA,clusters_12,D4GW48,"(cetZ3) FtsZ family protein CetZ, type III"
+HVO_1114,NA,NA,clusters_14,D4GW50,UPF0278 family protein
+HVO_1123,NA,rdfA_ddfA,NA,D4GW69,(trxB3) thioredoxin-disulfide reductase
+HVO_1128,NA,NA,clusters_11,D4GW77,(cbiX2) sirohydrochlorin cobaltochelatase
+HVO_1132,JK3_cetZ1,NA,NA,D4GW83,(purA) adenylosuccinate synthase
+HVO_1133,NA,rdfA_ddfA,NA,D4GW85,HTH domain protein
+HVO_1134,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GW86,conserved hypothetical protein
+HVO_1137,NA,NA,clusters_14,D4GW91,(pchA1) ion channel pore / TrkA domain protein
+HVO_1160,NA,NA,clusters_12,D4GWC7,(pilB4) type IV pilus biogenesis complex ATPase subunit
+HVO_1160,NA,NA,clusters_14,D4GWC7,(pilB4) type IV pilus biogenesis complex ATPase subunit
+HVO_1164,NA,rdfA_ddfA,NA,D4GWD0,HD family hydrolase
+HVO_1169,NA,NA,clusters_11,D4GWS0,"probable glycosyltransferase, type 1"
+HVO_1170,NA,NA,clusters_11,D4GWS1,glycine-rich protein
+HVO_1189,NA,NA,clusters_14,D4GWU7,(aldH2) aldehyde dehydrogenase
+HVO_1191,NA,rdfA_ddfA,NA,D4GWU9,(fadM2) proline dehydrogenase
+HVO_1201,NA,NA,clusters_12,D4GWW5,sensor box histidine kinase
+HVO_1205,NA,NA,clusters_12,D4GWX2,(cheD) taxis cluster protein CheD
+HVO_1206,JK3_cetZ1,NA,NA,D4GWX3,(cheC) taxis cluster protein CheC
+HVO_1208,NA,NA,clusters_12,D4GWX8,conserved hypothetical protein
+HVO_1210,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GWY0,(arlA1) archaellin A1
+HVO_1211,JK3_cetZ1,NA,NA,D4GWY2,(arlA2) archaellin A2
+HVO_1217,NA,NA,clusters_12,D4GWZ0,(arlI) archaellar motor/biogenesis protein ArlI
+HVO_1222,JK3_cetZ1,NA,clusters_12,D4GWZ8,(cheR) protein-glutamate O-methyltransferase CheR
+HVO_1223,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GWZ9,(cheA) taxis sensor histidine kinase CheA
+HVO_1224,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GX02,(cheB) protein-glutamate methylesterase / protein-glutamine glutaminase CheB
+HVO_1225,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GX03,(cheW1) purine-binding taxis protein CheW
+HVO_1228,JK3_cetZ1,NA,NA,D4GX08,(hcpE) DUF5059 domain / halocyanin domain protein
+HVO_1266,NA,NA,clusters_14,D4GX81,(aspC2) pyridoxal phosphate-dependent aminotransferase
+HVO_1272,NA,NA,clusters_14,D4GX90,TrmB family transcription regulator
+HVO_1273,JK3_cetZ1,NA,NA,D4GX92,(guaB1) inosine-5'-monophosphate dehydrogenase
+HVO_1301,NA,NA,clusters_12,D4GXE5,DUF87 domain protein
+HVO_1302,NA,NA,clusters_12,D4GXE6,(polY) DNA-directed DNA polymerase Y
+HVO_1305,NA,NA,clusters_14,D4GXF1,(porA) pyruvate--ferredoxin oxidoreductase alpha subunit
+HVO_1311,NA,NA,clusters_11,D4GXG1,probable oxidoreductase (short-chain dehydrogenase family)
+HVO_1338,NA,NA,clusters_11,D4GXL0,(rpa1) replication protein A
+HVO_1351,NA,NA,clusters_14,D4GXN3,(rad3a) DNA repair helicase Rad3
+HVO_1356,NA,NA,clusters_12,D4GXP2,sensor box histidine kinase
+HVO_1357,NA,NA,clusters_14,D4GXP4,receiver/bat box HTH-10 family transcription regulator
+HVO_1359,NA,NA,clusters_11,D4GXP8,small CPxCG-related zinc finger protein
+HVO_1369,NA,NA,clusters_11,D4GXR8,DUF124 family protein
+HVO_1380,NA,NA,clusters_14,D4GXT9,(mmcA2) methylmalonyl-CoA mutase subunit A
+HVO_1385,NA,NA,clusters_12,D4GXU9,(tfs1) transcription elongation factor TFS
+HVO_1395,NA,NA,clusters_14,D4GXW6,M20 family amidohydrolase (homolog to indole-3-acetyl-aspartate hydrolase)
+HVO_1409,NA,NA,clusters_14,D4GXY8,YwrF family protein
+HVO_1416,NA,NA,clusters_12,D4GXZ9,APH family phosphotransferase
+HVO_1440,NA,NA,clusters_11,D4GY40,conserved hypothetical protein
+HVO_1441,NA,NA,clusters_12,D4GY42,ABC-type transport system permease protein
+HVO_1442,NA,NA,clusters_12,D4GY44,ABC-type transport system permease protein
+HVO_1443,NA,rdfA_ddfA,clusters_12,D4GY47,ABC-type transport system ATP-binding protein
+HVO_1447,NA,NA,clusters_11,D4GY56,(pccB1) propionyl-CoA carboxylase carboxyltransferase component
+HVO_1451,NA,NA,clusters_11,D4GY63,(gdhA1) glutamate dehydrogenase (NAD)
+HVO_1453,NA,NA,clusters_14,D4GY69,(gdhA2) glutamate dehydrogenase (NADP)
+HVO_1468,NA,NA,clusters_12,D4GY99,conserved hypothetical protein
+HVO_1471,NA,NA,clusters_14,D4GYA5,YuiH family molybdopterin-binding domain protein
+HVO_1474,NA,NA,clusters_12,D4GYA9,probable rhomboid family protease
+HVO_1482,NA,NA,clusters_11,D4GYC3,(ferA2) ferredoxin (2Fe-2S)
+HVO_1484,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GYC8,(hemAT1) transducer protein HemAT
+HVO_1488,JK3_cetZ1,rdfA_ddfA,NA,D4GYD4,(gnaD) D-gluconate dehydratase
+HVO_1499,NA,NA,clusters_12,D4GYE5,"(ptfC) phosphotransferase system component IIC, fructose-specific"
+HVO_1501,NA,NA,clusters_14,D4GYE7,(glpR) DeoR family transcription regulator GlpR
+HVO_1523,NA,NA,clusters_12,D4GYG6,(aglQ) N-glycosylation pathway protein AglQ
+HVO_1528,NA,NA,clusters_12,D4GYH2,(aglI) glycosyltransferase AglI
+HVO_1529,NA,NA,clusters_12,D4GYH3,(aglG) glucuronosyltransferase AglG
+HVO_1537,NA,NA,clusters_11,D4GYI1,(orc15) Orc1-type DNA replication protein
+HVO_1538,NA,NA,clusters_14,D4GYI2,(glpA1) glycerol-3-phosphate dehydrogenase subunit A
+HVO_1558,NA,NA,clusters_11,D4GYY7,(cyc2) cytochrome P450
+HVO_1560,NA,rdfA_ddfA,NA,D4GYY9,UPF0212 family protein
+HVO_1576,NA,rdfA_ddfA,clusters_11,D4GZ05,GalE family epimerase/dehydratase
+HVO_1576,NA,rdfA_ddfA,clusters_14,D4GZ05,GalE family epimerase/dehydratase
+HVO_1577,NA,rdfA_ddfA,NA,D4GZ06,DUF293 domain protein
+HVO_1587,NA,NA,clusters_12,D4GZ16,conserved hypothetical protein
+HVO_1594,NA,NA,clusters_11,D4GZ23,(cna) tRNA/rRNA cytosine-C5-methylase
+HVO_1596,NA,NA,clusters_14,D4GZ25,DUF790 family protein
+HVO_1610,NA,NA,clusters_11,D4GZ39,DUF583 domain protein
+HVO_1625,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GZ54,conserved hypothetical protein
+HVO_1629,NA,NA,clusters_14,D4GZ58,conserved hypothetical protein
+HVO_1636,NA,NA,clusters_12,D4GZ65,conserved hypothetical protein
+HVO_1647,NA,NA,clusters_11,D4GZ75,conserved hypothetical protein
+HVO_1678,NA,NA,clusters_11,D4GZP2,(tif2b1) translation initiation factor aIF-2 beta subunit
+HVO_1696,NA,NA,clusters_11,D4H041,LctP family transport protein
+HVO_1697,NA,rdfA_ddfA,clusters_11,D4H042,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_1699,NA,NA,clusters_14,D4H044,pyridoxal phosphate-dependent aminotransferase (homolog to histidinol-phosphate aminotransferase / aspartate aminotransferase)
+HVO_1700,NA,NA,clusters_12,D4H045,HTH domain protein
+HVO_1711,NA,NA,clusters_14,D4H056,(sga1) probable glucoamylase
+HVO_1712,NA,NA,clusters_14,D4H057,START domain protein
+HVO_1715,NA,NA,clusters_11,D4H060,probable S-adenosylmethionine-dependent methyltransferase
+HVO_1723,NA,NA,clusters_11,D4H067,(rad25d) DNA repair helicase Rad25
+HVO_1735,NA,NA,clusters_14,D4H074,SWIM zinc finger domain protein
+HVO_1739,NA,NA,clusters_14,D4H078,conserved hypothetical protein
+HVO_1779,NA,NA,clusters_12,D4GSA3,(htr8) transducer protein Htr8
+HVO_1792,NA,NA,clusters_12,D4GSB6,Lrp/AsnC family transcription regulator
+HVO_1811,NA,NA,clusters_14,D4GSD5,sensor box histidine kinase
+HVO_1814,NA,NA,clusters_14,D4GSD8,peptidase M23 family protein
+HVO_1816,NA,NA,clusters_11,D4GSE0,(pyrC) dihydroorotase
+HVO_1829,NA,NA,clusters_14,D4GST7,(pepB2) aminopeptidase (homolog to leucyl aminopeptidase / aminopeptidase T)
+HVO_1831,NA,rdfA_ddfA,clusters_11,D4GST9,(ferA4) ferredoxin (2Fe-2S)
+HVO_1856,NA,NA,clusters_11,D4GSV9,conserved hypothetical protein
+HVO_1870,NA,NA,clusters_12,D4GSX3,M50 family metalloprotease
+HVO_1871,NA,NA,clusters_14,D4GSX4,(hemQ) coproheme decarboxylase HemQ
+HVO_1875,NA,NA,clusters_14,D4GSX8,O-acetyltransferase (homolog to galactoside O-acetyltransferase)
+HVO_1878,NA,NA,clusters_11,D4GSY0,"(nadE) NAD synthase, ammonia-dependent"
+HVO_1879,NA,NA,clusters_12,D4GSY1,(fadA3) enoyl-CoA hydratase
+HVO_1880,NA,NA,clusters_12,D4GSY2,conserved hypothetical protein
+HVO_1902,NA,rdfA_ddfA,clusters_12,D4GTD5,conserved hypothetical protein
+HVO_1916,NA,NA,clusters_14,D4GTE5,(kef1) Kef-type transport system
+HVO_1927,NA,NA,clusters_14,D4GTF6,DUF389 family protein
+HVO_1939,NA,NA,clusters_14,D4GTG8,(mutLa) DNA mismatch repair protein MutL
+HVO_1945,NA,NA,clusters_11,D4GTH4,conserved hypothetical protein
+HVO_1949,NA,NA,clusters_11,D4GTH8,conserved hypothetical protein
+HVO_1955,NA,NA,clusters_14,D4GTI4,(citB1) aconitate hydratase
+HVO_1966,NA,NA,clusters_14,D4GTJ5,Abi/CAAX domain protein
+HVO_1999,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GTM7,(htr7) transducer protein Htr7
+HVO_2013,JK3_cetZ1,rdfA_ddfA,NA,D4GU26,"(cetZ5) FtsZ family protein CetZ, type III"
+HVO_2015,JK3_cetZ1,rdfA_ddfA,NA,D4GU28,conserved hypothetical protein
+HVO_2016,NA,rdfA_ddfA,clusters_11,D4GU29,conserved hypothetical protein
+HVO_2017,NA,NA,clusters_11,D4GU30,conserved hypothetical protein
+HVO_2018,NA,rdfA_ddfA,NA,D4GU31,conserved hypothetical protein
+HVO_2020,NA,rdfA_ddfA,clusters_11,D4GU33,DUF502 family protein
+HVO_2027,NA,NA,clusters_14,D4GU40,DoxX domain protein
+HVO_2029,NA,NA,clusters_14,D4GU43,Lrp/AsnC family transcription regulator
+HVO_2031,NA,rdfA_ddfA,NA,D4GU44,(tsgA12) ABC-type transport system periplasmic substrate-binding protein (probable substrate sugar)
+HVO_2035,NA,NA,clusters_11,D4GU48,TrmB family transcription regulator
+HVO_2040,JK3_cetZ1,rdfA_ddfA,clusters_11,D4GU54,GalE family epimerase/dehydratase
+HVO_2046,NA,rdfA_ddfA,NA,D4GU60,(agl7) low-salt glycan biosynthesis sulfotransferase Agl7
+HVO_2048,NA,rdfA_ddfA,clusters_11,D4GU62,(agl9) low-salt glycan biosynthesis hexosyltransferase Agl9
+HVO_2049,NA,rdfA_ddfA,NA,D4GU63,(agl10) low-salt glycan biosynthesis hexosyltransferase Agl10
+HVO_2053,NA,rdfA_ddfA,NA,D4GU66,(agl5) low-salt glycan biosynthesis hexosyltransferase Agl5
+HVO_2057,JK3_cetZ1,rdfA_ddfA,NA,D4GU70,(agl11) glucose-1-phosphate thymidylyltransferase Agl11
+HVO_2058,NA,rdfA_ddfA,NA,D4GU71,(agl14) dTDP-4-dehydrorhamnose reductase
+HVO_2059,JK3_cetZ1,rdfA_ddfA,NA,D4GU72,"(agl12) dTDP-glucose 4,6-dehydratase"
+HVO_2060,NA,NA,clusters_11,D4GU73,(agl8) low-salt glycan biosynthesis protein Agl8
+HVO_2062,NA,NA,clusters_11,D4GU75,(pilA2) pilin PilA
+HVO_2069,NA,NA,clusters_11,D4GU82,RND superfamily permease
+HVO_2070,NA,NA,clusters_11,D4GU83,conserved hypothetical protein
+HVO_2071,NA,NA,clusters_14,D4GU84,probable secreted glycoprotein
+HVO_2072,NA,NA,clusters_11,P25062,(csg) S-layer glycoprotein
+HVO_2073,NA,NA,clusters_12,D4GU86,TrmB family transcription regulator
+HVO_2074,NA,NA,clusters_12,D4GU87,probable secreted glycoprotein
+HVO_2084,NA,NA,clusters_14,D4GUN2,ABC-type transport system permease protein (probable substrate macrolides)
+HVO_2088,NA,rdfA_ddfA,clusters_11,D4GUN6,glycoside hydrolase domain protein
+HVO_2091,JK3_cetZ1,NA,NA,D4GUN8,pyridoxal phosphate-dependent aminotransferase
+HVO_2093,NA,NA,clusters_11,D4GUP0,(nhaC4) probable NhaC-type sodium/proton antiporter
+HVO_2097,NA,NA,clusters_11,D4GUP4,major facilitator superfamily transport protein
+HVO_2133,NA,NA,clusters_11,D4GUT0,(orc16) Orc1-type DNA replication protein
+HVO_2156,NA,rdfA_ddfA,NA,D4GV89,UspA domain protein
+HVO_2160,JK3_cetZ1,rdfA_ddfA,NA,D4GV93,probable secreted glycoprotein
+HVO_2161,NA,rdfA_ddfA,NA,D4GV94,probable secreted glycoprotein
+HVO_2163,NA,rdfA_ddfA,NA,D4GV96,ABC-type transport system ATP-binding protein
+HVO_2168,NA,rdfA_ddfA,NA,D4GVA1,(moxR3) AAA-type ATPase (MoxR subfamily)
+HVO_2172,NA,NA,clusters_11,D4GVA5,conserved hypothetical protein
+HVO_2173,NA,NA,clusters_11,D4GVA6,DUF1616 family protein
+HVO_2174,JK3_cetZ1,NA,clusters_12,D4GVA7,conserved hypothetical protein
+HVO_2175,JK3_cetZ1,rdfA_ddfA,clusters_12,D4GVA8,(sph3) Smc-like protein Sph3
+HVO_2183,NA,rdfA_ddfA,NA,D4GVB6,(aor4) aldehyde ferredoxin oxidoreductase
+HVO_2193,JK3_cetZ1,NA,NA,D4GVC6,(purC) phosphoribosylaminoimidazole-succinocarboxamide synthase
+HVO_2203,NA,NA,clusters_12,D4GVD6,conserved hypothetical protein
+HVO_2204,NA,rdfA_ddfA,clusters_12,D4GVD7,"(cetZ1) FtsZ family protein CetZ, type III"
+HVO_2220,JK3_cetZ1,rdfA_ddfA,NA,D4GVT6,(htr38) transducer protein Htr38
+HVO_2226,NA,NA,clusters_12,D4GVU2,(trpD2) probable phosphoribosyltransferase (homolog to anthranilate phosphoribosyltransferase)
+HVO_2232,NA,rdfA_ddfA,clusters_12,D4GVU8,(cirD) KaiC-type circadian clock protein CirD
+HVO_2234,NA,NA,clusters_11,D4GVV0,(msrB) peptide methionine sulfoxide reductase MsrB (R-form specific)
+HVO_2263,NA,rdfA_ddfA,NA,D4GVX9,HTH domain protein
+HVO_2269,NA,NA,clusters_14,D4GVY5,(rmeR) type I site-specific deoxyribonuclease subunit RmeR
+HVO_2270,NA,NA,clusters_14,D4GVY6,(rmeM) type I restriction-modification system DNA-methyltransferase RmeM
+HVO_2271,NA,NA,clusters_12,D4GVY7,(rmeS) type I site-specific deoxyribonuclease subunit RmeS
+HVO_2275,NA,NA,clusters_14,D4GVZ1,N-6 adenine-specific DNA methylase domain protein
+HVO_2276,NA,NA,clusters_14,D4GVZ2,conserved hypothetical protein
+HVO_2302,NA,NA,clusters_11,D4GWH1,UbiB family protein
+HVO_2313,NA,NA,clusters_14,D4GWE9,(ahbB) siroheme decarboxylase AhbB
+HVO_2338,NA,NA,clusters_12,D4GWI7,(thrB) homoserine kinase
+HVO_2344,NA,NA,clusters_14,D4GWJ3,HTH domain protein
+HVO_2347,NA,NA,clusters_11,D4GWJ6,conserved hypothetical protein
+HVO_2350,NA,NA,clusters_14,D4GWJ9,YyaL family protein
+HVO_2359,NA,NA,clusters_12,D4GWK7,conserved hypothetical protein
+HVO_2361,JK3_cetZ1,NA,NA,D4GWK9,(carB) carbamoyl-phosphate synthase (glutamine-hydrolyzing) large subunit
+HVO_2369,NA,NA,clusters_14,D4GWL7,NurA domain protein
+HVO_2371,NA,NA,clusters_11,D4GWL9,conserved hypothetical protein
+HVO_2418,NA,NA,clusters_14,D4GWR5,probable secreted glycoprotein
+HVO_2423,NA,NA,clusters_12,D4GSM6,GNAT family acetyltransferase
+HVO_2424,NA,NA,clusters_12,D4GSM8,conserved hypothetical protein
+HVO_2427,NA,NA,clusters_11,D4GSN1,(rfcB) replication factor C large subunit
+HVO_2446,NA,NA,clusters_14,D4GT15,DMT superfamily transport protein
+HVO_2447,NA,NA,clusters_11,D4GT17,conserved hypothetical protein
+HVO_2452,JK3_cetZ1,NA,NA,D4GT33,"(nrdJ) ribonucleoside-diphosphate reductase, adenosylcobalamin-dependent"
+HVO_2462,JK3_cetZ1,NA,clusters_12,D4GT54,(htr37) transducer protein Htr37
+HVO_2469,NA,NA,clusters_12,D4GT71,SNF family transport protein
+HVO_2476,NA,NA,clusters_14,D4GT83,DUF447 family protein
+HVO_2481,NA,NA,clusters_14,D4GT99,HD family hydrolase
+HVO_2482,NA,NA,clusters_11,D4GTA1,HD family hydrolase
+HVO_2498,NA,NA,clusters_14,D4GTR1,conserved hypothetical protein
+HVO_2500,NA,NA,clusters_11,D4GTR6,(cat2) transport protein (probable substrate cationic amino acids)
+HVO_2509,NA,NA,clusters_12,D4GTU1,sensor box histidine kinase
+HVO_2589,NA,NA,clusters_11,D4GU97,(ansA) asparaginase family protein
+HVO_2591,NA,NA,clusters_11,D4GUA3,conserved hypothetical protein
+HVO_2620,NA,NA,clusters_11,D4GUF8,(petA) cytochrome bc1 complex Rieske iron-sulfur protein
+HVO_2632,NA,NA,clusters_11,D4GUI9,(tfs2) transcription elongation factor TFS
+HVO_2637,NA,NA,clusters_11,D4GUW4,conserved hypothetical protein
+HVO_2650,NA,NA,clusters_14,D4GV06,FAD-dependent oxidoreductase (homolog to geranylgeranyl reductase)
+HVO_2660,NA,NA,clusters_11,D4GV24,receiver/sensor box histidine kinase
+HVO_2661,NA,NA,clusters_12,D4GV29,pyridoxal phosphate-dependent aminotransferase
+HVO_2670,NA,NA,clusters_14,D4GV46,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_2673,NA,NA,clusters_11,D4GV49,conserved hypothetical protein
+HVO_2681,NA,NA,clusters_14,D4GVN6,HTH domain protein
+HVO_2683,NA,NA,clusters_14,D4GVN9,5'-nucleotidase family hydrolase
+HVO_2688,NA,rdfA_ddfA,NA,D4GVQ2,(trmB) TrmB family transcription regulator TrmB
+HVO_2700,JK3_cetZ1,rdfA_ddfA,NA,D4GVS7,(cdc48b) AAA-type ATPase (CDC48 subfamily)
+HVO_2707,NA,NA,clusters_12,D4GW10,GFO family oxidoreductase
+HVO_2710,NA,NA,clusters_14,D4GW19,homolog to archaease
+HVO_2725,NA,rdfA_ddfA,NA,D4GW51,(idsA1) bifunctional short chain isoprenyl diphosphate synthase
+HVO_2739,NA,rdfA_ddfA,NA,D4GW81,(rpl24e) 50S ribosomal protein L24e
+HVO_2752,NA,rdfA_ddfA,NA,D4GWB1,(tef1b) translation elongation factor aEF-1 beta
+HVO_2759,NA,NA,clusters_11,D4GWT1,peptidase M42 family protein
+HVO_2767,NA,NA,clusters_14,D4GWV5,(dna2) ATP-dependent DNA helicase Dna2
+HVO_2812,NA,NA,clusters_14,D4GX45,AstE domain protein
+HVO_2814,NA,NA,clusters_11,D4GX55,DNA N-glycosylase
+HVO_2815,NA,NA,clusters_11,D4GX56,(hbd1) 3-hydroxyacyl-CoA dehydrogenase / enoyl-CoA hydratase
+HVO_2836,NA,NA,clusters_14,D4GXA3,sensor/bat box HTH-10 family transcription regulator
+HVO_2862,JK3_cetZ1,NA,NA,D4GXG2,(glyA1) serine hydroxymethyltransferase
+HVO_2865,JK3_cetZ1,NA,NA,D4GXG9,(folD) methylenetetrahydrofolate dehydrogenase / methenyltetrahydrofolate cyclohydrolase
+HVO_2873,NA,NA,clusters_11,D4GXI8,(fen1) flap endonuclease Fen1
+HVO_2879,NA,rdfA_ddfA,NA,D4GXJ7,ornithine cyclodeaminase family protein
+HVO_2882,NA,NA,clusters_11,D4GXK4,DUF4013 family protein
+HVO_2888,NA,NA,clusters_14,D4GXL7,(elp3) homolog to elongator complex protein ELP3
+HVO_2890,NA,NA,clusters_14,D4GXM2,DUF649 family protein
+HVO_2900,NA,NA,clusters_14,D4GXP5,(fumC) fumarate hydratase
+HVO_2905,NA,NA,clusters_14,D4GXQ6,(maoC3) MaoC domain protein
+HVO_2907,NA,NA,clusters_12,D4GXR0,conserved hypothetical protein
+HVO_2951,NA,NA,clusters_14,D4GY00,(trpS1) tryptophan--tRNA ligase
+HVO_2952,NA,NA,clusters_11,O07118,(endA) tRNA-splicing endonuclease
+HVO_2959,NA,NA,clusters_14,D4GY17,(oadhB1) 2-oxo-3-methylvalerate dehydrogenase E1 component beta subunit
+HVO_2968,NA,NA,clusters_12,D4GY36,(serA3) D-3-phosphoglycerate dehydrogenase
+HVO_2976,NA,NA,clusters_11,D4GY51,(cstA) carbon starvation protein CstA
+HVO_2977,NA,NA,clusters_12,D4GY53,(arsA2) ArsA family ATPase
+HVO_2979,NA,NA,clusters_14,D4GY57,CobW domain protein
+HVO_2981,NA,rdfA_ddfA,NA,D4GY62,(upp) uracil phosphoribosyltransferase
+HVO_2992,NA,NA,clusters_14,D4GY83,(hisI) phosphoribosyl-AMP cyclohydrolase
+HVO_2993,NA,rdfA_ddfA,clusters_12,D4GY85,(pibD) prepilin/prearchaellin peptidase
+HVO_2996,NA,NA,clusters_11,D4GY91,transport protein (probable substrate phosphate/sulfate)
+HVO_3001,NA,rdfA_ddfA,clusters_12,D4GYA0,ABC-type transport system permease protein
+HVO_3002,NA,rdfA_ddfA,clusters_12,D4GYA3,ABC-type transport system ATP-binding protein
+HVO_3005,JK3_cetZ1,NA,NA,D4GYB1,(htr15b) transducer protein Htr15
+HVO_3010,NA,NA,clusters_12,D4GYC2,(hef) ATP-dependent RNA helicase/nuclease Hef
+HVO_A0001,NA,NA,clusters_14,D4GQ34,(orc3) Orc1-type DNA replication protein
+HVO_A0040,NA,NA,clusters_11,D4GQ72,small CPxCG-related zinc finger protein
+HVO_A0074,NA,NA,clusters_14,D4GQA6,AAA-type ATPase domain protein
+HVO_A0083,NA,NA,clusters_12,D4GQB5,Rieske-type iron-sulfur protein (2Fe-2S)
+HVO_A0088,NA,NA,clusters_14,D4GQC0,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_A0088,NA,NA,clusters_11,D4GQC0,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_A0093,NA,NA,clusters_11,D4GQC5,IclR family transcription regulator
+HVO_A0121,NA,NA,clusters_12,D4GQF3,HTH-10 family transcription regulator_NumberOfIdenticalSequences_2
+HVO_A0126,NA,NA,clusters_14,D4GQF7,XerC/D-like integrase
+HVO_A0131_A,NA,NA,clusters_14,A0A1C9J6T7,conserved hypothetical protein
+HVO_A0133,JK3_cetZ1,rdfA_ddfA,NA,D4GQG3,conserved hypothetical protein
+HVO_A0135,NA,NA,clusters_11,D4GQG4,HTH domain protein
+HVO_A0150,NA,NA,clusters_14,D4GQH9,(trmB1) TrmB family transcription regulator
+HVO_A0153,NA,NA,clusters_14,D4GQI2,UspA domain protein
+HVO_A0156,NA,rdfA_ddfA,NA,D4GQI5,(acs7) acyl-CoA synthetase
+HVO_A0158,NA,rdfA_ddfA,NA,D4GQI7,(acs8) acyl-CoA synthetase
+HVO_A0180,NA,NA,clusters_14,D4GQK9,(sph1) Smc-like protein Sph1
+HVO_A0211,NA,NA,clusters_14,D4GQP0,(cas1) CRISPR-associated endonuclease Cas1
+HVO_A0251,NA,NA,clusters_11,D4GQT0,HTH domain protein
+HVO_A0256,NA,NA,clusters_12,D4GQT5,conserved hypothetical protein
+HVO_A0257,NA,NA,clusters_14,D4GQT6,(orc7) Orc1-type DNA replication protein
+HVO_A0269,NA,NA,clusters_14,D4GQU6,(glpA2) glycerol-3-phosphate dehydrogenase subunit A
+HVO_A0269,NA,NA,clusters_11,D4GQU6,(glpA2) glycerol-3-phosphate dehydrogenase subunit A
+HVO_A0270,NA,NA,clusters_11,D4GQU7,(glpB2) glycerol-3-phosphate dehydrogenase subunit B
+HVO_A0280,NA,NA,clusters_12,D4GQV7,IclR family transcription regulator
+HVO_A0295,NA,NA,clusters_12,D4GQX2,(amaB2) amidase (hydantoinase/carbamoylase family)
+HVO_A0323,NA,NA,clusters_14,D4GR00,ABC-type transport system ATP-binding protein
+HVO_A0328,NA,NA,clusters_11,D4GR05,(kdgK2) 2-keto-3-deoxygalactonate kinase
+HVO_A0339,NA,NA,clusters_14,D4GR16,(dppA7) ABC-type transport system periplasmic substrate-binding protein (probable substrate dipeptide/oligopeptide)
+HVO_A0346,NA,NA,clusters_11,D4GR21,XerC/D-like integrase
+HVO_A0384,NA,rdfA_ddfA,clusters_11,D4GR52,(dppF8) ABC-type transport system ATP-binding protein (probable substrate dipeptide/oligopeptide)
+HVO_A0406,NA,NA,clusters_14,D4GR72,conserved hypothetical protein
+HVO_A0425,NA,NA,clusters_11,D4GR88,(dppF9) ABC-type transport system ATP-binding protein (probable substrate dipeptide/oligopeptide)
+HVO_A0451,NA,NA,clusters_11,D4GRB6,DASS family transport protein
+HVO_A0452,NA,rdfA_ddfA,NA,D4GRB7,UspA domain protein
+HVO_A0458,NA,NA,clusters_14,D4GRC3,ParA domain protein
+HVO_A0464,NA,NA,clusters_12,D4GRC9,conserved hypothetical protein
+HVO_A0498,NA,NA,clusters_14,D4GRG1,conserved hypothetical protein
+HVO_A0499,NA,NA,clusters_14,D4GRG2,conserved hypothetical protein
+HVO_A0512,NA,rdfA_ddfA,NA,D4GRH4,(aldH4) aldehyde dehydrogenase
+HVO_A0527,NA,NA,clusters_14,D4GRI9,IclR family transcription regulator
+HVO_A0536,NA,NA,clusters_11,D4GRJ8,(hyuB1) N-methylhydantoinase (ATP-hydrolyzing) B
+HVO_A0537,NA,NA,clusters_11,D4GRJ9,(hyuA1) N-methylhydantoinase (ATP-hydrolyzing) A
+HVO_A0569,NA,NA,clusters_11,D4GRN0,family 3 CoA transferase
+HVO_A0587,NA,NA,clusters_12,D4GRP7,receiver/sensor box protein
+HVO_A0606,NA,NA,clusters_12,D4GRR5,major facilitator superfamily transport protein
+HVO_A0618,NA,rdfA_ddfA,NA,D4GRS6,flavin-dependent pyridine nucleotide oxidoreductase (homolog to coenzyme A disulfide reductase)
+HVO_A0624,NA,NA,clusters_12,D4GRT2,(cadA) P-type transport ATPase (probable substrate zinc/cadmium)
+HVO_A0627,NA,NA,clusters_14,D4GRT5,conserved hypothetical protein
+HVO_A0629,NA,NA,clusters_14,D4GRT7,sensor box histidine kinase
+HVO_B0018,NA,NA,clusters_12,D4GP19,(parA2) ParA domain protein
+HVO_B0074,NA,NA,clusters_12,D4GP76,DUF917 family protein
+HVO_B0085,NA,NA,clusters_14,D4GP87,glycoside hydrolase domain protein
+HVO_B0087,NA,NA,clusters_14,D4GP89,homolog to mandelate racemase / homolog to muconate lactonizing enzyme
+HVO_B0101,NA,NA,clusters_14,D4GPA3,IclR family transcription regulator
+HVO_B0114,NA,NA,clusters_14,D4GPB5,IclR family transcription regulator
+HVO_B0118,NA,NA,clusters_12,D4GPB9,(sph2) Smc-like protein Sph2
+HVO_B0143,JK3_cetZ1,NA,NA,D4GPE4,receiver/sensor box histidine kinase
+HVO_B0173,NA,NA,clusters_14,D4GPH4,(sph4) Smc-like protein Sph4
+HVO_B0183,NA,NA,clusters_14,D4GPI4,probable amino acid racemase (homolog to homoserine racemase)
+HVO_B0203,NA,NA,clusters_14,D4GPK4,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_B0213,NA,NA,clusters_14,D4GPL4,myo-inositol-1-phosphate synthase
+HVO_B0248,NA,NA,clusters_12,D4GPP7,probable oxidoreductase (short-chain dehydrogenase family)
+HVO_B0256,NA,rdfA_ddfA,NA,D4GPQ3,(aor3) aldehyde ferredoxin oxidoreductase
+HVO_B0257,NA,NA,clusters_12,D4GPQ4,pyridoxal phosphate-dependent aminotransferase
+HVO_B0259,NA,NA,clusters_14,D4GPQ6,conserved hypothetical protein
+HVO_B0263,NA,NA,clusters_14,D4GPR0,M20 family amidohydrolase (homolog to indole-3-acetyl-aspartate hydrolase)
+HVO_B0265,NA,NA,clusters_11,D4GPR2,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_B0266,NA,NA,clusters_11,D4GPR3,(gdhA3) glutamate dehydrogenase (NAD)
+HVO_B0300,NA,NA,clusters_11,D4GPU7,(pucL1) uricase
+HVO_B0358,NA,NA,clusters_14,D4GQ05,conserved hypothetical protein
+HVO_C0001,NA,NA,clusters_11,D4H092,(orc10) Orc1-type DNA replication protein
+HVO_C0012,NA,NA,clusters_12,D4H0A3,conserved hypothetical protein
+HVO_C0046,NA,NA,clusters_11,D4H0D4,conserved hypothetical protein
+HVO_C0076,NA,NA,clusters_14,D4H0F8,IclR family transcription regulator

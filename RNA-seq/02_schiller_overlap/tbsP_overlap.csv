@@ -1,0 +1,12 @@
+locus_tag,old_locus_tag,model.x,model.y,analysis_type.x,analysis_type.y,analysis_type,uniprot,annotation
+HVO_RS08595,HVO_0812,TbsP interaction,NA,NA,NA,clusters_14,D4GUD0,(ppsA) phosphoenolpyruvate synthase
+HVO_RS08985,HVO_0894,TbsP interaction,NA,NA,rdfA_ddfA,NA,D4GUW1,(acs1) acyl-CoA synthetase
+HVO_RS19100,HVO_2976,TbsP interaction,NA,NA,NA,clusters_11,D4GY51,(cstA) carbon starvation protein CstA
+HVO_RS01000,HVO_B0203,TbsP interaction,NA,NA,NA,clusters_14,D4GPK4,FAD-dependent oxidoreductase (GlcD/DLD_GlcF/GlpC domain fusion protein)
+HVO_RS01050,HVO_B0213,TbsP interaction,NA,NA,NA,clusters_14,D4GPL4,myo-inositol-1-phosphate synthase
+HVO_RS06840,HVO_0445,NA,TbsP genotype,NA,NA,clusters_14,D4GRY6,(phnE1) ABC-type transport system permease protein (probable substrate phosphate/phosphonate)
+HVO_RS06845,HVO_0446,NA,TbsP genotype,NA,NA,clusters_11,D4GRY7,(phnC1) ABC-type transport system ATP-binding protein (probable substrate phosphate/phosphonate)
+HVO_RS10425,HVO_1191,NA,TbsP genotype,NA,rdfA_ddfA,NA,D4GWU9,(fadM2) proline dehydrogenase
+HVO_RS14465,HVO_2031,NA,TbsP genotype,NA,rdfA_ddfA,NA,D4GU44,(tsgA12) ABC-type transport system periplasmic substrate-binding protein (probable substrate sugar)
+HVO_RS16065,HVO_2361,NA,TbsP genotype,JK3_cetZ1,NA,NA,D4GWK9,(carB) carbamoyl-phosphate synthase (glutamine-hydrolyzing) large subunit
+HVO_RS18640,HVO_2882,NA,TbsP genotype,NA,NA,clusters_11,D4GXK4,DUF4013 family protein
