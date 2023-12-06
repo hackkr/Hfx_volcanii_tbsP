@@ -1,0 +1,46 @@
+Invoking:
+  getsize trimmed_pro_trmB5_6.fna 1> $metrics
+Finished invoke:
+  name: count_primary_seqs  status: 0  time: 0.020593
+Invoking:
+  streme --verbosity 1 --oc trimmed_1st/streme_out -dna --minw 6 --maxw 23 --order 1 --bfile trimmed_1st/1st_intergenic.txt --seed 0 --align right --evalue --thresh 0.05 --p trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: streme  status: 0  time: 1.007838
+Invoking:
+  meme -oc trimmed_1st/meme_out -mod anr -minw 6 -maxw 23 -bfile trimmed_1st/1st_intergenic.txt -markov_order 1 -seed 0 -dna -revcomp -evt 0.05 -nostatus trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: meme  status: 0  time: 0.938251
+Invoking:
+  sea --verbosity 1 --oc trimmed_1st/sea_out --qvalue --thresh 1 --order 1 --bfile trimmed_1st/1st_intergenic.txt --seed 0 --align right --motif-pseudo 0.01 --noseqs --m trimmed_1st/streme_out/streme.xml --p trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: sea_disc  status: 0  time: 0.091875
+Invoking:
+  sea --verbosity 1 --oc trimmed_1st/distr_out --pvalue --thresh 1 --hofract 0 --order 1 --bfile trimmed_1st/1st_intergenic.txt --seed 0 --motif-pseudo 0.01 --p trimmed_pro_trmB5_6.fna --m trimmed_1st/combined.meme
+Finished invoke:
+  name: distr_sea  status: 0  time: 0.093654
+Invoking:
+  tomtom -verbosity 1 -text -thresh 0.1 trimmed_1st/combined.meme trimmed_1st/combined.meme 1> trimmed_1st/motif_alignment.txt
+Finished invoke:
+  name: align_tomtom  status: 0  time: 0.082689
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc trimmed_1st/fimo_out_1 --bgfile trimmed_1st/1st_intergenic.txt --motif 1-RTAGTT trimmed_1st/streme_out/streme.xml trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: fimo1  status: 0  time: 0.084836
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc trimmed_1st/fimo_out_2 --bgfile trimmed_1st/1st_intergenic.txt --motif 2-GCCGCCCGSK trimmed_1st/streme_out/streme.xml trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: fimo2  status: 0  time: 0.09524
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc trimmed_1st/fimo_out_3 --bgfile trimmed_1st/1st_intergenic.txt --motif 3-GCSASCGAAD trimmed_1st/streme_out/streme.xml trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: fimo3  status: 0  time: 0.093815
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc trimmed_1st/fimo_out_4 --bgfile trimmed_1st/1st_intergenic.txt --motif 5-WTACTMRCYWTMGAGT trimmed_1st/streme_out/streme.xml trimmed_pro_trmB5_6.fna
+Finished invoke:
+  name: fimo4  status: 0  time: 0.103995
+Writing output
+Invoking:
+  xstreme_html_to_tsv trimmed_1st//xstreme.html trimmed_1st//xstreme.tsv "xstreme -maxw 23 --meme-mod anr --order 1 -p trimmed_pro_trmB5_6.fna --bfile background_models/1st_intergenic.txt --align right --oc trimmed_1st/" 5.5.1 "Sun Jan 29 10\:33\:12 2023 -0800"
+Finished invoke:
+  name: summary  status: 0  time: 0.172677
+Done

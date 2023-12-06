@@ -1,0 +1,74 @@
+********************************************************************************
+MEME - Motif discovery tool
+********************************************************************************
+MEME version 5.5.1 (Release date: Sun Jan 29 10:33:12 2023 -0800)
+
+For further information on how to interpret these results please access http://localhost:8080/meme_5.5.1.
+To get a copy of the MEME Suite software please access https://meme-suite.org.
+
+********************************************************************************
+
+
+********************************************************************************
+REFERENCE
+********************************************************************************
+If you use this program in your research, please cite:
+
+Timothy L. Bailey and Charles Elkan,
+"Fitting a mixture model by expectation maximization to
+discover motifs in biopolymers",
+Proceedings of the Second International Conference on Intelligent Systems
+for Molecular Biology, pp. 28-36, AAAI Press, Menlo Park, California, 1994.
+********************************************************************************
+
+
+********************************************************************************
+TRAINING SET
+********************************************************************************
+PRIMARY SEQUENCES= trimmed_pro_trmB5_6.fna
+CONTROL SEQUENCES= --none--
+ALPHABET= ACGT
+Sequence name            Weight Length  Sequence name            Weight Length  
+-------------            ------ ------  -------------            ------ ------  
+NC_013967.1:426415-42660 1.0000    189  NC_013967.1:733857-73397 1.0000    117  
+NC_013967.1:1317527-1317 1.0000    250  NC_013967.1:430979-43122 1.0000    250  
+NC_013967.1:461803-46205 1.0000    250  NC_013967.1:463211-46324 1.0000     31  
+NC_013967.1:859729-85987 1.0000    150  NC_013967.1:988644-98889 1.0000    250  
+NC_013967.1:1359238-1359 1.0000     84  NC_013967.1:2469668-2469 1.0000    212  
+********************************************************************************
+
+********************************************************************************
+COMMAND LINE SUMMARY
+********************************************************************************
+This information can also be useful in the event you wish to report a
+problem with the MEME software.
+
+command: meme -oc trimmed_1st/meme_out -mod anr -minw 6 -maxw 23 -bfile trimmed_1st/1st_intergenic.txt -markov_order 1 -seed 0 -dna -revcomp -evt 0.05 -nostatus trimmed_pro_trmB5_6.fna 
+
+model:  mod=           anr    nmotifs=      1000    evt=          0.05
+objective function:           em=       E-value of product of p-values
+                              starts=   E-value of product of p-values
+strands: + -
+width:  minw=            6    maxw=           23
+nsites: minsites=        2    maxsites=       50    wnsites=       0.8
+theta:  spmap=         uni    spfuzz=        0.5
+em:     prior=   dirichlet    b=            0.01    maxiter=        50
+        distance=    1e-05
+trim:   wg=             11    ws=              1    endgaps=       yes
+data:   n=            1783    N=              10
+sample: seed=            0    hsfrac=          0
+        searchsize=   1783    norand=         no    csites=       1000
+Letter frequencies in dataset:
+A 0.211 C 0.289 G 0.289 T 0.211 
+Background letter frequencies (from file trimmed_1st/1st_intergenic.txt):
+A 0.205 C 0.295 G 0.295 T 0.205 
+Background model order: 1
+********************************************************************************
+
+********************************************************************************
+Stopped because the next motif E-value > 5.00e-02.
+********************************************************************************
+
+CPU: ee350a9d98f3
+
+********************************************************************************

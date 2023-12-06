@@ -1,0 +1,4 @@
+
+# FIMO (Find Individual Motif Occurrences): Version 5.5.1 compiled on Feb  5 2023 at 03:13:30
+# The format of this file is described at http://localhost:8080/meme_5.5.1/doc/fimo-output-format.html.
+# fimo --parse-genomic-coord --verbosity 1 --oc trimmed_1st/fimo_out_1 --bgfile trimmed_1st/1st_intergenic.txt --motif 1-RTAGTT trimmed_1st/streme_out/streme.xml trimmed_pro_trmB5_6.fna
