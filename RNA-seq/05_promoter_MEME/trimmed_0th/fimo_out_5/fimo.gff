@@ -1,0 +1,4 @@
+##gff-version 3
+NC_013967.1	fimo	nucleotide_motif	733896	733903	40.7	+	.	Name=5-GCGACCGA_NC_013967.1+;Alias=STREME-5;ID=5-GCGACCGA-STREME-5-1-NC_013967.1;pvalue=8.55e-05;qvalue=0.0961;sequence=GCGAACGA;
+NC_013967.1	fimo	nucleotide_motif	859815	859822	45.6	+	.	Name=5-GCGACCGA_NC_013967.1+;Alias=STREME-5;ID=5-GCGACCGA-STREME-5-1-NC_013967.1;pvalue=2.78e-05;qvalue=0.0468;sequence=GCGACCGA;
+NC_013967.1	fimo	nucleotide_motif	2469764	2469771	45.6	+	.	Name=5-GCGACCGA_NC_013967.1+;Alias=STREME-5;ID=5-GCGACCGA-STREME-5-1-NC_013967.1;pvalue=2.78e-05;qvalue=0.0468;sequence=GCGACCGA;
