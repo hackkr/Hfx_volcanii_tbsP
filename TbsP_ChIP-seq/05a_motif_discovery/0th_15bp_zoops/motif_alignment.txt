@@ -1,0 +1,10 @@
+Query_ID	Target_ID	Optimal_offset	p-value	E-value	q-value	Overlap	Query_consensus	Target_consensus	Orientation
+1	1	0	7.62776e-20	3.81388e-19	7.62776e-19	12	AGAAATTAACTC	AGAAATTAACTC	+
+2	2	0	8.06617e-11	4.03309e-10	8.06617e-10	7	AGACGAC	AGACGAC	+
+3	3	0	4.20305e-17	2.10153e-16	4.20305e-16	11	ACCGCGTCGGC	ACCGCGTCGGC	+
+4	4	0	3.89083e-18	1.94541e-17	3.89083e-17	10	CGCCGAAGAA	CGCCGAAGAA	+
+5	5	0	3.92211e-22	1.96106e-21	3.92211e-21	14	CGCCGGCGGCGCGG	CGCCGGCGGCGCGG	+
+
+# Tomtom (Motif Comparison Tool): Version 5.5.1 compiled on Feb  5 2023 at 03:13:43
+# The format of this file is described at http://localhost:8080/meme_5.5.1/doc/tomtom-output-format.html.
+# tomtom -verbosity 1 -text -thresh 0.1 0th_15bp_zoops/combined.meme 0th_15bp_zoops/combined.meme

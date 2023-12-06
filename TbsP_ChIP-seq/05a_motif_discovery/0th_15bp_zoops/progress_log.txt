@@ -1,0 +1,50 @@
+Invoking:
+  getsize ChIP_consensus.fna 1> $metrics
+Finished invoke:
+  name: count_primary_seqs  status: 0  time: 0.019338
+Invoking:
+  streme --verbosity 1 --oc 0th_15bp_zoops/streme_out -dna --minw 6 --maxw 15 --order 0 --bfile 0th_15bp_zoops/0th_intergenic.txt --seed 0 --align center --evalue --thresh 0.05 --p ChIP_consensus.fna
+Finished invoke:
+  name: streme  status: 0  time: 1.179373
+Invoking:
+  meme -oc 0th_15bp_zoops/meme_out -mod zoops -minw 6 -maxw 15 -bfile 0th_15bp_zoops/0th_intergenic.txt -markov_order 0 -seed 0 -dna -revcomp -evt 0.05 -nostatus ChIP_consensus.fna
+Finished invoke:
+  name: meme  status: 0  time: 0.693652
+Invoking:
+  sea --verbosity 1 --oc 0th_15bp_zoops/sea_out --qvalue --thresh 1 --order 0 --bfile 0th_15bp_zoops/0th_intergenic.txt --seed 0 --align center --motif-pseudo 0.01 --noseqs --m 0th_15bp_zoops/streme_out/streme.xml --p ChIP_consensus.fna
+Finished invoke:
+  name: sea_disc  status: 0  time: 0.097967
+Invoking:
+  sea --verbosity 1 --oc 0th_15bp_zoops/distr_out --pvalue --thresh 1 --hofract 0 --order 0 --bfile 0th_15bp_zoops/0th_intergenic.txt --seed 0 --motif-pseudo 0.01 --p ChIP_consensus.fna --m 0th_15bp_zoops/combined.meme
+Finished invoke:
+  name: distr_sea  status: 0  time: 0.090914
+Invoking:
+  tomtom -verbosity 1 -text -thresh 0.1 0th_15bp_zoops/combined.meme 0th_15bp_zoops/combined.meme 1> 0th_15bp_zoops/motif_alignment.txt
+Finished invoke:
+  name: align_tomtom  status: 0  time: 0.075497
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_1 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 2-WGAAATWAASTC 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna
+Finished invoke:
+  name: fimo1  status: 0  time: 0.087566
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_2 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 1-AGACGAC 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna
+Finished invoke:
+  name: fimo2  status: 0  time: 0.086115
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_3 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 3-ACMRCGTCGSY 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna
+Finished invoke:
+  name: fimo3  status: 0  time: 0.095673
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_4 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 4-CGCCGAAGAA 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna
+Finished invoke:
+  name: fimo4  status: 0  time: 0.085375
+Invoking:
+  fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_5 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 5-CGCCGGCKGCGCGR 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna
+Finished invoke:
+  name: fimo5  status: 0  time: 0.087104
+Writing output
+Invoking:
+  xstreme_html_to_tsv 0th_15bp_zoops//xstreme.html 0th_15bp_zoops//xstreme.tsv "xstreme -maxw 15 --meme-mod zoops --order 0 --p ChIP_consensus.fna --bfile 0th_intergenic.txt --oc 0th_15bp_zoops/" 5.5.1 "Sun Jan 29 10\:33\:12 2023 -0800"
+Finished invoke:
+  name: summary  status: 0  time: 0.158525
+Done

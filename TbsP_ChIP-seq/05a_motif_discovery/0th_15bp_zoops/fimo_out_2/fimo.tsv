@@ -1,0 +1,8 @@
+motif_id	motif_alt_id	sequence_name	start	stop	strand	score	p-value	q-value	matched_sequence
+1-AGACGAC	STREME-1	NC_013966.1	487319	487325	-	13.1173	6.52e-05	0.113	AGACGAC
+1-AGACGAC	STREME-1	NC_013966.1	487409	487415	+	13.1173	6.52e-05	0.113	AGACGAC
+1-AGACGAC	STREME-1	NC_013966.1	487427	487433	+	13.1173	6.52e-05	0.113	AGACGAC
+
+# FIMO (Find Individual Motif Occurrences): Version 5.5.1 compiled on Feb  5 2023 at 03:13:30
+# The format of this file is described at http://localhost:8080/meme_5.5.1/doc/fimo-output-format.html.
+# fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_2 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 1-AGACGAC 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna

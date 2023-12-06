@@ -1,0 +1,74 @@
+********************************************************************************
+MEME - Motif discovery tool
+********************************************************************************
+MEME version 5.5.1 (Release date: Sun Jan 29 10:33:12 2023 -0800)
+
+For further information on how to interpret these results please access http://localhost:8080/meme_5.5.1.
+To get a copy of the MEME Suite software please access https://meme-suite.org.
+
+********************************************************************************
+
+
+********************************************************************************
+REFERENCE
+********************************************************************************
+If you use this program in your research, please cite:
+
+Timothy L. Bailey and Charles Elkan,
+"Fitting a mixture model by expectation maximization to
+discover motifs in biopolymers",
+Proceedings of the Second International Conference on Intelligent Systems
+for Molecular Biology, pp. 28-36, AAAI Press, Menlo Park, California, 1994.
+********************************************************************************
+
+
+********************************************************************************
+TRAINING SET
+********************************************************************************
+PRIMARY SEQUENCES= ChIP_consensus.fna
+CONTROL SEQUENCES= --none--
+ALPHABET= ACGT
+Sequence name            Weight Length  Sequence name            Weight Length  
+-------------            ------ ------  -------------            ------ ------  
+NC_013964.1:329319-32961 1.0000    300  NC_013966.1:49327-49627  1.0000    300  
+NC_013966.1:364461-36476 1.0000    300  NC_013966.1:462546-46284 1.0000    300  
+NC_013966.1:487248-48754 1.0000    300  NC_013967.1:426417-42671 1.0000    300  
+NC_013967.1:813981-81428 1.0000    300  NC_013967.1:1159565-1159 1.0000    300  
+NC_013967.1:2477389-2477 1.0000    300  
+********************************************************************************
+
+********************************************************************************
+COMMAND LINE SUMMARY
+********************************************************************************
+This information can also be useful in the event you wish to report a
+problem with the MEME software.
+
+command: meme -oc 0th_15bp_zoops/meme_out -mod zoops -minw 6 -maxw 15 -bfile 0th_15bp_zoops/0th_intergenic.txt -markov_order 0 -seed 0 -dna -revcomp -evt 0.05 -nostatus ChIP_consensus.fna 
+
+model:  mod=         zoops    nmotifs=      1000    evt=          0.05
+objective function:           em=       E-value of product of p-values
+                              starts=   E-value of product of p-values
+strands: + -
+width:  minw=            6    maxw=           15
+nsites: minsites=        2    maxsites=        9    wnsites=       0.8
+theta:  spmap=         uni    spfuzz=        0.5
+em:     prior=   dirichlet    b=            0.01    maxiter=        50
+        distance=    1e-05
+trim:   wg=             11    ws=              1    endgaps=       yes
+data:   n=            2700    N=               9
+sample: seed=            0    hsfrac=          0
+        searchsize=   2700    norand=         no    csites=       1000
+Letter frequencies in dataset:
+A 0.217 C 0.283 G 0.283 T 0.217 
+Background letter frequencies (from file 0th_15bp_zoops/0th_intergenic.txt):
+A 0.205 C 0.295 G 0.295 T 0.205 
+Background model order: 0
+********************************************************************************
+
+********************************************************************************
+Stopped because the next motif E-value > 5.00e-02.
+********************************************************************************
+
+CPU: 406e2f2cbcda
+
+********************************************************************************

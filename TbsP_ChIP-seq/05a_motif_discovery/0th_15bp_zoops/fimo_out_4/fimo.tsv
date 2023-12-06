@@ -1,0 +1,11 @@
+motif_id	motif_alt_id	sequence_name	start	stop	strand	score	p-value	q-value	matched_sequence
+4-CGCCGAAGAA	STREME-4	NC_013964.1	329322	329331	+	16.3358	1.16e-06	0.00302	CGCCGAAGAA
+4-CGCCGAAGAA	STREME-4	NC_013967.1	2477481	2477490	+	16.3358	1.16e-06	0.00302	CGCCGAAGAA
+4-CGCCGAAGAA	STREME-4	NC_013966.1	462594	462603	-	12.7226	2.5e-05	0.0433	CTCCGAAGCA
+4-CGCCGAAGAA	STREME-4	NC_013966.1	49539	49548	-	11.9197	4.92e-05	0.0638	AGCCGAATCA
+4-CGCCGAAGAA	STREME-4	NC_013967.1	814117	814126	+	11.2336	7.48e-05	0.0696	CCACGAATAA
+4-CGCCGAAGAA	STREME-4	NC_013967.1	426685	426694	-	11	8.05e-05	0.0696	CGCCGATGAG
+
+# FIMO (Find Individual Motif Occurrences): Version 5.5.1 compiled on Feb  5 2023 at 03:13:30
+# The format of this file is described at http://localhost:8080/meme_5.5.1/doc/fimo-output-format.html.
+# fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_4 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 4-CGCCGAAGAA 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna

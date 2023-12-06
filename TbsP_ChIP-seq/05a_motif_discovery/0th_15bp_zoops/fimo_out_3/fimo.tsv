@@ -1,0 +1,12 @@
+motif_id	motif_alt_id	sequence_name	start	stop	strand	score	p-value	q-value	matched_sequence
+3-ACMRCGTCGSY	STREME-3	NC_013964.1	329566	329576	+	16.2681	2.6e-06	0.00652	ACAACGTCGCC
+3-ACMRCGTCGSY	STREME-3	NC_013966.1	462647	462657	+	16.2681	2.6e-06	0.00652	ACAGCGTCGGT
+3-ACMRCGTCGSY	STREME-3	NC_013967.1	426652	426662	-	15.8116	3.79e-06	0.00652	ACCGCGTCGGC
+3-ACMRCGTCGSY	STREME-3	NC_013967.1	2477470	2477480	-	15.3043	7.16e-06	0.00924	ACCACGTCGAC
+3-ACMRCGTCGSY	STREME-3	NC_013966.1	364602	364612	-	15.0362	9.25e-06	0.00955	ACAAAGTCGGT
+3-ACMRCGTCGSY	STREME-3	NC_013966.1	487348	487358	-	13.7174	1.86e-05	0.016	ACCGCGTCGCG
+3-ACMRCGTCGSY	STREME-3	NC_013966.1	462752	462762	+	9.81884	6.43e-05	0.0473	ACGACGTCGAC
+
+# FIMO (Find Individual Motif Occurrences): Version 5.5.1 compiled on Feb  5 2023 at 03:13:30
+# The format of this file is described at http://localhost:8080/meme_5.5.1/doc/fimo-output-format.html.
+# fimo --parse-genomic-coord --verbosity 1 --oc 0th_15bp_zoops/fimo_out_3 --bgfile 0th_15bp_zoops/0th_intergenic.txt --motif 3-ACMRCGTCGSY 0th_15bp_zoops/streme_out/streme.xml ChIP_consensus.fna
