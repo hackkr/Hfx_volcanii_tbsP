@@ -1,0 +1,13 @@
+strain,condition,biorep,WCE,IP
+WT,glu,1,00_bedgraph/H26_1_glc_WCE_S46_S52.bedgraph,00_bedgraph/H26_1_glc_IP_S43_S49.bedgraph
+WT,glu,2,00_bedgraph/H26_2_glc_WCE_S64_S70.bedgraph,00_bedgraph/H26_2_glc_IP_S85_S91.bedgraph
+WT,no.glu,1,00_bedgraph/H26_1_WCE_S68_S74.bedgraph,00_bedgraph/H26_1_IP_S62_S68.bedgraph
+WT,no.glu,2,00_bedgraph/H26_2_WCE_S53_S59.bedgraph,00_bedgraph/H26_2_IP_S52_S58.bedgraph
+tbsP_HA,glu,1,00_bedgraph/tbsPHA_1_glc_WCE_S48_S54.bedgraph,00_bedgraph/tbsPHA_1_glc_IP_S79_S85.bedgraph
+tbsP_HA,glu,2,00_bedgraph/tbsPHA_2_glc_WCE_S54_S60.bedgraph,00_bedgraph/tbsPHA_2_glc_IP_S45_S51.bedgraph
+tbsP_HA,glu,3,00_bedgraph/tbsPHA_3_glc_WCE_S66_S72.bedgraph,00_bedgraph/tbsPHA_3_glc_IP_S72_S78.bedgraph
+tbsP_HA,glu,4,00_bedgraph/tbsPHA_4_glc_WCE_S71_S77.bedgraph,00_bedgraph/tbsPHA_4_glc_IP_S78_S84.bedgraph
+tbsP_HA,no.glu,1,00_bedgraph/tbsPHA_1_WCE_S47_S53.bedgraph,00_bedgraph/tbsPHA_1_IP_S41_S47.bedgraph
+tbsP_HA,no.glu,2,00_bedgraph/tbsPHA_2_WCE_S56_S62.bedgraph,00_bedgraph/tbsPHA_2_IP_S88_S94.bedgraph
+tbsP_HA,no.glu,3,00_bedgraph/tbsPHA_3_WCE_S55_S61.bedgraph,00_bedgraph/tbsPHA_3_IP_S67_S73.bedgraph
+tbsP_HA,no.glu,4,00_bedgraph/tbsPHA_4_WCE_S76_S82.bedgraph,00_bedgraph/tbsPHA_4_IP_S94_S100.bedgraph

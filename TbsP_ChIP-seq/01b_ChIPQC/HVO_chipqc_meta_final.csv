@@ -1,0 +1,10 @@
+SampleID,Tissue,Factor,Condition,Replicate,bamReads,ControlID,bamControl,Peaks,PeakCaller
+IP_WT_glc_2,HVO,WT,0.1% glucose,2,00_sorted_bams/H26_2_glc_IP_S85_S91_sorted.bam,HVO_WT_glc_2,00_sorted_bams/H26_2_glc_WCE_S64_S70_sorted.bam,01a_mosaics/final_peaks/HVO_WT_glc_2.bed,bed
+IP_tbsPHA_glc_1,HVO,tbsP,0.1% glucose,1,00_sorted_bams/tbsPHA_1_glc_IP_S79_S85_sorted.bam,HVO_tbsPHA_glc_1,00_sorted_bams/tbsPHA_1_glc_WCE_S48_S54_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_glc_1.bed,bed
+IP_tbsPHA_glc_2,HVO,tbsP,0.1% glucose,2,00_sorted_bams/tbsPHA_2_glc_IP_S45_S51_sorted.bam,HVO_tbsPHA_glc_2,00_sorted_bams/tbsPHA_2_glc_WCE_S54_S60_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_glc_2.bed,bed
+IP_tbsPHA_glc_3,HVO,tbsP,0.1% glucose,3,00_sorted_bams/tbsPHA_3_glc_IP_S72_S78_sorted.bam,HVO_tbsPHA_glc_3,00_sorted_bams/tbsPHA_3_glc_WCE_S66_S72_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_glc_3.bed,bed
+IP_tbsPHA_glc_4,HVO,tbsP,0.1% glucose,4,00_sorted_bams/tbsPHA_4_glc_IP_S78_S84_sorted.bam,HVO_tbsPHA_glc_4,00_sorted_bams/tbsPHA_4_glc_WCE_S71_S77_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_glc_4.bed,bed
+IP_tbsPHA_1,HVO,tbsP,no glucose,1,00_sorted_bams/tbsPHA_1_IP_S41_S47_sorted.bam,HVO_tbsPHA_1,00_sorted_bams/tbsPHA_1_WCE_S47_S53_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_1.bed,bed
+IP_tbsPHA_2,HVO,tbsP,no glucose,2,00_sorted_bams/tbsPHA_2_IP_S88_S94_sorted.bam,HVO_tbsPHA_2,00_sorted_bams/tbsPHA_2_WCE_S56_S62_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_2.bed,bed
+IP_tbsPHA_3,HVO,tbsP,no glucose,3,00_sorted_bams/tbsPHA_3_IP_S67_S73_sorted.bam,HVO_tbsPHA_3,00_sorted_bams/tbsPHA_3_WCE_S55_S61_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_3.bed,bed
+IP_tbsPHA_4,HVO,tbsP,no glucose,4,00_sorted_bams/tbsPHA_4_IP_S94_S100_sorted.bam,HVO_tbsPHA_4,00_sorted_bams/tbsPHA_4_WCE_S76_S82_sorted.bam,01a_mosaics/final_peaks/HVO_tbsPHA_4.bed,bed
